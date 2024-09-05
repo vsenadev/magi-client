@@ -1,95 +1,74 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
 
-export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+import styles from './styles/Page.module.sass';
+import Image from 'next/image';
+import MagiLogo from '../../public/magi-logo-c-blue.svg';
+import UserIcon from '../../public/user-icon.svg';
+import PasswordIcon from '../../public/password-icon.svg';
+import Title from "@/app/components/title";
+import SelectButton from "@/app/components/selectButton";
+import InputText from "@/app/components/inputText";
+import {useContext, useState} from "react";
+import {GlobalStateContext} from "@/app/context/globalState";
+import Button from "@/app/components/button";
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+export default function Login() {
+    const [adminAccount, setAdminAccount] = useState<boolean>(false);
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+    const context = useContext(GlobalStateContext);
+     if (!context) {
+        throw new Error("Title must be used within a GlobalStateProvider");
+    }
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
+    const { user, setUser, password, setPassword, text, language } = context;
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
+     async function handleSubmit() {
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+     }
+
+    return (
+        <section className={styles.container}>
+            <div className={styles.container_image}>
+                <Image
+                    src={MagiLogo}
+                    alt="Magi Logo"
+                    priority={true}
+                />
+            </div>
+            <div className={styles.container__box}>
+                <Title content={text?.[language].login_login}/>
+                <div className={styles.container__box_select}>
+                    <SelectButton
+                        firstOption={text?.[language].login_administrator}
+                        lastOption={text?.[language].login_common}
+                        type={adminAccount}
+                        state={setAdminAccount}
+                    />
+                </div>
+                <div className={styles.container__box_input}>
+                    <InputText
+                        placeholder={text?.[language].login_user}
+                        value={user}
+                        state={setUser}
+                        icon={UserIcon.src}
+                        type='text'
+                    />
+                    <InputText
+                        placeholder={text?.[language].login_password}
+                        value={password}
+                        state={setPassword}
+                        icon={PasswordIcon.src}
+                        type='password'
+                    />
+                </div>
+                <div className={styles.container__forgot}>
+                    <p className={styles.container__forgot_content}>{text?.[language].login_forget}</p>
+                </div>
+                <Button
+                    content={text?.[language].login_enter}
+                    function={handleSubmit()}
+                />
+            </div>
+        </section>
+    );
 }

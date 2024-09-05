@@ -1,0 +1,65 @@
+@import '../styles/_variables'
+
+.container
+  width: 100dvw
+  height: 100dvh
+  background-color: $background-color
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+
+  &__box
+    display: flex
+    flex-direction: column
+    align-items: center
+    background-color: $white
+    padding: 2rem 0
+    width: 25%
+    height: calc(45% - 4rem)
+    border-radius: 18px
+    box-shadow: rgba(33, 35, 38, 0.1) 0 10px 10px -10px
+
+    &_select
+      width: 80%
+      display: flex
+      justify-content: center
+      align-items: center
+      height: 6rem
+
+    &_input
+      display: flex
+      flex-direction: column
+      width: 80%
+      gap: 2rem
+
+  &__forgot
+    display: flex
+    width: 80%
+    height: 3rem
+    align-items: center
+    justify-content: flex-end
+
+    &_content
+      font-family: $font
+      font-size: 0.8rem
+      cursor: pointer
+
+    &_content:hover
+      color: $dark-green
+
+@media (max-width: 1440px)
+.container__box
+  width: 35%
+
+@media (max-width: 1024px)
+.container__box
+  width: 45%
+
+@media (max-width: 768px)
+.container__box
+  width: 55%
+
+@media (max-width: 425px)
+.container__box
+  width: 100%
