@@ -22,7 +22,7 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({ childr
   const [language, setLanguage] = useState<string>('pt');
   const [user, setUser] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const text = require('../data/language.json');
+  const text = require('../../data/language.json');
 
   return (
     <GlobalStateContext.Provider value={{
