@@ -5,7 +5,8 @@ export default function Button(props: IButton){
     return(
         <button
             className={styles.button}
-            onClick={async () => await props.function}>
+            disabled={props.disabled}
+            onClick={async () => await props.function()}>
             {props.content}
         </button>
     )
