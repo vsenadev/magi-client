@@ -1,6 +1,6 @@
 'use client';
 
-import {ISelectButtonInterface} from "@/app/interface/SelectButton.interface";
+import {ISelectButtonInterface} from "@/interface/SelectButton.interface";
 import styles from './SelectButton.module.sass';
 
 export default function SelectButton(props: ISelectButtonInterface){

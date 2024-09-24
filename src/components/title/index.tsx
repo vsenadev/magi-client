@@ -1,4 +1,4 @@
-import { ITitle } from "@/app/interface/Title.interface";
+import { ITitle } from "@/interface/Title.interface";
 import styles from './Title.module.sass';
 
 export default function Title(props: ITitle) {

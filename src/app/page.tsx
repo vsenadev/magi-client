@@ -1,20 +1,20 @@
 'use client'
 
-import styles from './styles/Page.module.sass';
+import styles from '@/styles/Page.module.sass';
 import Image from 'next/image';
 import MagiLogo from '../../public/magi-logo-c-blue.svg';
 import UserIcon from '../../public/user-icon.svg';
 import PasswordIcon from '../../public/password-icon.svg';
-import Title from "@/app/components/title";
-import SelectButton from "@/app/components/selectButton";
-import InputText from "@/app/components/inputText";
+import Title from "@/components/title";
+import SelectButton from "@/components/selectButton";
+import InputText from "@/components/inputText";
 import {useContext, useState} from "react";
-import {GlobalStateContext} from "@/app/context/globalState";
-import Button from "@/app/components/button";
-import {http} from "@/app/environment/environment";
+import {GlobalStateContext} from "@/context/globalState";
+import Button from "@/components/button";
+import {http} from "@/environment/environment";
 import {Alert, AlertTitle} from "@mui/material";
 import { setCookie } from 'nookies';
-import { useRouter } from "next/navigation"; // Importar corretamente para Next.js 13
+import { useRouter } from "next/navigation";
 
 export default function Login() {
     const [adminAccount, setAdminAccount] = useState<boolean>(false);

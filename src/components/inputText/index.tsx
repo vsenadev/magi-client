@@ -1,6 +1,6 @@
 'use client'
 
-import {IInputText} from "@/app/interface/InputText.interface";
+import {IInputText} from "@/interface/InputText.interface";
 import styles from './InputText.module.sass';
 
 export default function InputText(props: IInputText) {

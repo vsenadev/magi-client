@@ -1,5 +1,5 @@
 import styles from './Button.module.sass';
-import {IButton} from "@/app/interface/Button.interface";
+import {IButton} from "@/interface/Button.interface";
 
 export default function Button(props: IButton){
     return(
