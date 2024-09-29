@@ -7,7 +7,8 @@
     "login_user": "Email",
     "login_password": "Senha",
     "login_forget": "Esqueci minha senha",
-    "login_enter": "Entrar"
+    "login_enter": "Entrar",
+    "login_token": "Sua sessão expirou. Por favor, faça login novamente para continuar utilizando a ferramenta."
   },
   "en": {
     "language": "English",
@@ -17,7 +18,8 @@
     "login_user": "Email",
     "login_password": "Password",
     "login_forget": "Forgot my password",
-    "login_enter": "Enter"
+    "login_enter": "Enter",
+    "login_token": "Your session has expired. Please log in again to continue using the tool."
   },
   "es": {
     "language": "Español",
@@ -27,6 +29,7 @@
     "login_user": "Correo electrónico",
     "login_password": "Contraseña",
     "login_forget": "Olvidé mi contraseña",
-    "login_enter": "Entrar"
+    "login_enter": "Entrar",
+    "login_token": "Su sesión ha expirado. Por favor, inicie sesión nuevamente para continuar usando la herramienta."
   }
 }

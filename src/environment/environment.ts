@@ -9,8 +9,8 @@ export const http = axios.create({
 http.interceptors.request.use((config) => {
   const cookies = parseCookies();
   const token = cookies.jwt_token;
-
-  if (config.url !== 'v1/login' && token) {
+  console.log(config.url, config.method)
+  if (!(config.url === 'v1/login' && config.method === "post") && token) {
     config.headers['Authorization'] = `Bearer ${token}`;
   }
 

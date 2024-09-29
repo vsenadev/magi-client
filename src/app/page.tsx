@@ -8,12 +8,12 @@ import PasswordIcon from '../../public/password-icon.svg';
 import Title from "@/components/title";
 import SelectButton from "@/components/selectButton";
 import InputText from "@/components/inputText";
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {GlobalStateContext} from "@/context/globalState";
 import Button from "@/components/button";
 import {http} from "@/environment/environment";
 import {Alert, AlertTitle} from "@mui/material";
-import { setCookie } from 'nookies';
+import {parseCookies, setCookie} from 'nookies';
 import { useRouter } from "next/navigation";
 
 export default function Login() {
@@ -51,6 +51,22 @@ export default function Login() {
                   sameSite: 'strict',
                 });
 
+                http.get('v1/login')
+                .then(userInformation => {
+                    setCookie(null, 'user_information', JSON.stringify(userInformation?.data), {
+                        maxAge: 5 * 24 * 60 * 60,
+                        path: '/',
+                        secure: process.env.NODE_ENV === 'production' || process.env.NEXT_PUBLIC_ENVIRONMENT === 'staging',
+                        sameSite: 'strict',
+                    });
+
+                    router.push('/home');
+                })
+                .catch(() => {
+                    setModalAlert(true);
+                    setModalMessage(text?.[language].login_token);
+                });
+
                 router.push('/home');
             }
         } catch (error: any) {
@@ -65,6 +81,27 @@ export default function Login() {
         }
     }
 
+    useEffect(() => {
+        const { jwt_token } = parseCookies();
+
+        if (jwt_token){
+            http.get('v1/login')
+                .then(userInformation => {
+                    setCookie(null, 'user_information', JSON.stringify(userInformation?.data), {
+                        maxAge: 5 * 24 * 60 * 60,
+                        path: '/',
+                        secure: process.env.NODE_ENV === 'production' || process.env.NEXT_PUBLIC_ENVIRONMENT === 'staging',
+                        sameSite: 'strict',
+                    });
+
+                    router.push('/home');
+                })
+                .catch(() => {
+                    setModalAlert(true);
+                    setModalMessage(text?.[language].login_token);
+                });
+        }
+    }, []);
 
     return (
         <section className={styles.container}>
