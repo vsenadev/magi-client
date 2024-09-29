@@ -15,6 +15,7 @@ import {http} from "@/environment/environment";
 import {Alert, AlertTitle} from "@mui/material";
 import {parseCookies, setCookie} from 'nookies';
 import { useRouter } from "next/navigation";
+import {AxiosResponse} from "axios";
 
 export default function Login() {
     const [adminAccount, setAdminAccount] = useState<boolean>(false);
@@ -30,6 +31,17 @@ export default function Login() {
     }
 
     const { user, setUser, password, setPassword, text, language } = context;
+
+    function saveUserInformationAndRedirect(userInformation:AxiosResponse) {
+        setCookie(null, 'user_information', JSON.stringify(userInformation?.data), {
+            maxAge: 5 * 24 * 60 * 60,
+            path: '/',
+            secure: process.env.NODE_ENV === 'production' || process.env.NEXT_PUBLIC_ENVIRONMENT === 'staging',
+            sameSite: 'strict',
+        });
+
+        router.push('/home');
+    }
 
     async function handleSubmit() {
         setIsLoading(true);
@@ -53,14 +65,7 @@ export default function Login() {
 
                 http.get('v1/login')
                 .then(userInformation => {
-                    setCookie(null, 'user_information', JSON.stringify(userInformation?.data), {
-                        maxAge: 5 * 24 * 60 * 60,
-                        path: '/',
-                        secure: process.env.NODE_ENV === 'production' || process.env.NEXT_PUBLIC_ENVIRONMENT === 'staging',
-                        sameSite: 'strict',
-                    });
-
-                    router.push('/home');
+                    saveUserInformationAndRedirect(userInformation)
                 })
                 .catch(() => {
                     setModalAlert(true);
@@ -87,14 +92,7 @@ export default function Login() {
         if (jwt_token){
             http.get('v1/login')
                 .then(userInformation => {
-                    setCookie(null, 'user_information', JSON.stringify(userInformation?.data), {
-                        maxAge: 5 * 24 * 60 * 60,
-                        path: '/',
-                        secure: process.env.NODE_ENV === 'production' || process.env.NEXT_PUBLIC_ENVIRONMENT === 'staging',
-                        sameSite: 'strict',
-                    });
-
-                    router.push('/home');
+                    saveUserInformationAndRedirect(userInformation)
                 })
                 .catch(() => {
                     setModalAlert(true);
