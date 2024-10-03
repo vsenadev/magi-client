@@ -3,6 +3,7 @@ import "@/styles/reset.css";
 import "@/styles/_variables.sass"
 import React from "react";
 import { GlobalStateProvider } from "@/context/globalState";
+import Sidebar from "@/components/Sidebar";
 
 export const metadata: Metadata = {
   title: "MAGI",
@@ -18,6 +19,7 @@ export default function RootLayout({
     <html lang="pt-BR" suppressHydrationWarning={true}>
       <body>
         <GlobalStateProvider>
+          <Sidebar/>
           {children}
         </GlobalStateProvider>
       </body>
