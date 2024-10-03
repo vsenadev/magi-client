@@ -2,15 +2,15 @@
 
 import styles from '@/styles/Page.module.sass';
 import Image from 'next/image';
-import MagiLogo from '../../public/magi-logo-c-blue.svg';
-import UserIcon from '../../public/user-icon.svg';
-import PasswordIcon from '../../public/password-icon.svg';
-import Title from "@/components/title";
-import SelectButton from "@/components/selectButton";
-import InputText from "@/components/inputText";
+import MagiLogo from '@/../public/img/magi-logo-c-blue.svg';
+import UserIcon from '@/../public/img/user-icon.svg';
+import PasswordIcon from '@/../public/img/password-icon.svg';
+import Title from "@/components/Title";
+import SelectButton from "@/components/SelectButton";
+import InputText from "@/components/InputText";
 import {useContext, useEffect, useState} from "react";
 import {GlobalStateContext} from "@/context/globalState";
-import Button from "@/components/button";
+import Button from "@/components/Button";
 import {http} from "@/environment/environment";
 import {Alert, AlertTitle} from "@mui/material";
 import {parseCookies, setCookie} from 'nookies';
