@@ -11,10 +11,11 @@ export default function InputText(props: IInputText) {
             onChange={(e) => props.state(e.target.value)}
             style={{
                 background: `url(${props.icon})`,
-                backgroundColor:'#F1F5F9',
+                backgroundColor: props.white ? '#FFFF' : '#F1F5F9',
                 backgroundPosition: '10px center',
                 backgroundSize: '24px',
                 backgroundRepeat: 'no-repeat',
+                width: props.width
             }}
             type={props.type}
             className={styles.input}

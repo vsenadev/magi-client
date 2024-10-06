@@ -1,0 +1,44 @@
+@import '@/styles/_variables.sass'
+
+.container
+  height: 3rem
+  background-color: $white
+  font-family: $font
+  display: flex
+  justify-content: space-between
+  text-indent: 1rem
+  flex-direction: row
+  position: relative
+  cursor: pointer
+  align-items: center
+  border-radius: 5px
+  padding-right: 10px
+
+  span
+    display: flex
+    align-items: center
+
+  &__box
+    display: flex
+    flex-direction: column
+    position: absolute
+    top: 3rem
+    background-color: $white
+    width: 100%
+
+    &_option
+      height: 3rem
+      display: flex
+      align-items: center
+      border-bottom: solid 1px $gray
+
+.arrow
+  width: 0
+  height: 0
+  border-left: 3px solid transparent
+  border-right: 3px solid transparent
+  border-top: 3px solid $black
+  transition: transform 0.3s ease
+
+.active
+  transform: rotate(180deg)
