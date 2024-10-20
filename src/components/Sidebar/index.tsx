@@ -57,8 +57,9 @@ export default function Sidebar(){
             redirect: '/deliveries'
         }
     ];
+
     useEffect(() => {
-        setUserInformation(JSON.parse(user_information))
+        user_information && setUserInformation(JSON.parse(user_information))
     }, [user_information]);
 
     return(
@@ -69,11 +70,11 @@ export default function Sidebar(){
                         src={sidebarOpen ? MagiBigLogo : MagiLogo}
                         alt="MAGI Logo"
                         priority={true}
-                        width={sidebarOpen ? 220 : 64}
-                        height={sidebarOpen ? 220 : 64}
+                        width={sidebarOpen ? 220 : 54}
+                        height={sidebarOpen ? 220 : 54}
                     />
                     <div
-                        style={sidebarOpen ? { left: '21rem' } : { left: '5rem' }}
+                        style={sidebarOpen ? { left: '18rem' } : { left: '4.5rem' }}
                         className={`${styles.container__image_arrow} ${sidebarOpen ? styles['container__image_arrow--rotated'] : ''}`}
                         onClick={() => setSidebarOpen(!sidebarOpen)}
                     >

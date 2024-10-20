@@ -143,6 +143,8 @@ export default function Login() {
                         state={setUser}
                         icon={UserIcon.src}
                         type='text'
+                        white={false}
+                        width='100%'
                     />
                     <InputText
                         placeholder={text?.[language].login_password}
@@ -150,6 +152,8 @@ export default function Login() {
                         state={setPassword}
                         icon={PasswordIcon.src}
                         type='password'
+                        white={false}
+                        width='100%'
                     />
                 </div>
                 <div className={styles.container__forgot}>

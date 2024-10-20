@@ -1,0 +1,102 @@
+@import '@/styles/_variables.sass'
+
+.container
+  width: 90%
+  height: 100%
+
+  &__table
+    height: 95%
+    min-height: 95%
+    display: flex
+    flex-direction: column
+
+    &_line
+      display: flex
+      height: 4rem
+      align-items: center
+      width: 100%
+      background-color: $white
+      border-bottom: 1px solid $gray-border
+      font-family: $font
+
+      &_picture
+        width: 5%
+        display: flex
+        align-items: center
+        justify-content: center
+
+        img
+          border-radius: 100%
+
+      &_name, &_cnpj, &_address, &_type, &_status
+        text-indent: 1rem
+
+      &_name, &_cnpj
+        width: 20%
+
+      &_address
+        width: 30%
+
+      &_type, &_status
+        width: 10%
+
+      &_view
+        display: flex
+        align-items: center
+        justify-content: center
+        width: 5%
+
+        &_button
+          cursor: pointer
+          display: flex
+          align-items: center
+          justify-content: center
+          width: 2rem
+          height: 2rem
+          border-radius: 4px
+          background-color: $dark-green
+
+  &__pagination
+    width: 100%
+    display: flex
+    justify-content: space-between
+    align-items: center
+    min-height: 5%
+
+    &_divisor
+      display: flex
+      gap: 0.5rem
+      align-items: center
+      justify-content: center
+      background-color: $white
+      height: 3rem
+      width: 5%
+      padding: 0 0.55rem
+
+      &_page
+        font-family: $font
+        width: 50%
+        height: 80%
+        background-color: $background-color
+        border: none
+        cursor: pointer
+        border-radius: 4px
+
+    &_buttons
+      display: flex
+      height: 3rem
+      width: 5%
+      justify-content: center
+      align-items: center
+      background-color: $white
+      gap: 0.5rem
+
+      &_return, &_pass
+        width: 40%
+        height: 70%
+        font-family: $font
+        font-size: 1.2rem
+        cursor: pointer
+        background-color: $background-color
+        border-style: none
+        border-radius: 4px
