@@ -8,4 +8,6 @@ export interface IInputText {
     type: string;
     white: boolean;
     width: string;
+    mask?: string;
+    disabled?: boolean;
 }

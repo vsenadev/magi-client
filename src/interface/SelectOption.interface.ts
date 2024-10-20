@@ -1,4 +1,5 @@
 export interface ISelectOption {
+    backgroundBlue?: boolean;
     placeholder: string;
     active: boolean;
     setActive: (active: boolean) => void;
@@ -9,5 +10,6 @@ export interface ISelectOption {
 }
 
 export interface IOption {
+    value: string;
     name: string;
 }

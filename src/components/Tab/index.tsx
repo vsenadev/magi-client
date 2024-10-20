@@ -2,9 +2,6 @@ import styles from './Tab.module.sass'
 import InputText from "@/components/InputText";
 import SelectOption from "@/components/SelectOption";
 import {ITab} from "@/interface/Tab.interface";
-import {useEffect, useState} from "react";
-import {http} from "@/environment/environment";
-import {IOption} from "@/interface/SelectOption.interface";
 
 export default function Tab(props: ITab){
 
@@ -37,7 +34,9 @@ export default function Tab(props: ITab){
                 value={props.secondSelectOptionValue}
                 setValue={props.secondSelectOptionSetValue}
             />
-            <button className={styles.container__new}>{props.buttonText}</button>
+            <button
+                onClick={() => props.buttonAction(true)}
+                className={styles.container__new}>{props.buttonText}</button>
         </div>
     )
 }

@@ -21,4 +21,5 @@ export interface ITab {
     secondSelectOptionValue: string;
     secondSelectOptionSetValue: React.Dispatch<React.SetStateAction<string>>;
     buttonText: string;
+    buttonAction: (value: boolean) => void;
 }
