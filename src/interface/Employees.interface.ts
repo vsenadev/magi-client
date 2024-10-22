@@ -1,5 +1,6 @@
 export interface IEmployees {
   id: string;
+  picture: string;
   employee_name: string;
   company_name: string;
   cpf: string;
@@ -7,7 +8,5 @@ export interface IEmployees {
   phoneNumber: string;
   email: string;
   status_account: number;
-  type_account: number;
-  //TODO rever esse conceito
-  picture: string;
+  type_account: string;
 }

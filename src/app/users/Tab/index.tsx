@@ -7,10 +7,10 @@ import SearchIcon from '@/../public/img/search-icon.svg';
 import { IOption } from "@/interface/SelectOption.interface";
 import { http } from "@/environment/environment";
 import { useGlobalState } from "@/context/globalState";
-import Modal from "../../../components/ModalCompanies";
+import Modal from "../../../components/ModalEmployees";
 
 export default function TabUsers() {
-    const { setCompanies, allCompanies, activeModalCompany, setActiveModalCompany } = useGlobalState();
+    const { setUser, allUsers, activeModalEmployees, setActiveModalEmployees } = useGlobalState();
     const [search, setSearch] = useState<string>('');
     const [activeType, setActiveType] = useState<boolean>(false);
     const [activeStatus, setActiveStatus] = useState<boolean>(false);
@@ -36,26 +36,26 @@ export default function TabUsers() {
     }, []);
 
     useEffect(() => {
-        filterCompanies();
+        filterUsers();
     }, [search, selectedType, selectedStatus]);
 
-    function filterCompanies() {
+    function filterUsers() {
         if (!search && !selectedType && !selectedStatus) {
-            setCompanies(allCompanies);
+            setUser(allUsers);
             return;
         }
 
-        const filteredCompanies = allCompanies.filter(company => {
+        const filteredCompanies = allUsers.filter(employee => {
             const matchesSearch =
-                company.name.toLowerCase().includes(search.toLowerCase()) ||
-                company.cnpj.includes(search);
-            const matchesType = selectedType ? company.type_account === selectedType : true;
-            const matchesStatus = selectedStatus ? company.status_account === selectedStatus : true;
+            employee.employee_name.toLowerCase().includes(search.toLowerCase()) ||
+            employee.cpf.includes(search);
+            const matchesType = selectedType ? employee.type_account === selectedType : true;
+            const matchesStatus = selectedStatus ? String(employee.status_account) === selectedStatus : true;
 
             return matchesSearch && matchesType && matchesStatus;
         });
 
-        setCompanies(filteredCompanies);
+        setUser(filteredCompanies);
     }
 
     return (
@@ -80,10 +80,10 @@ export default function TabUsers() {
                 secondSelectOptionValue={selectedStatus}
                 secondSelectOptionSetValue={setSelectedStatus}
                 buttonText='ADICIONAR FUNCIONÁRIO'
-                buttonAction={setActiveModalCompany}
+                buttonAction={setActiveModalEmployees}
             />
             {
-                activeModalCompany && (
+                activeModalEmployees && (
                     <section className={styles.container__modal}>
                         <Modal
                             title='Funcionário'

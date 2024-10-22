@@ -20,27 +20,25 @@ import SelectOption from "@/components/SelectOption";
 import { IOption } from "@/interface/SelectOption.interface";
 import axios from "axios";
 import { Alert, AlertTitle } from "@mui/material";
+import { IEmployees } from '@/interface/Employees.interface';
 
 export default function Modal(props: IModal) {
-    const { idSelected, setIdSelected, setActiveModalCompany } = useGlobalState();
+    const { idSelected, setIdSelected, setActiveModalEmployees } = useGlobalState();
     const [activeType, setActiveType] = useState<boolean>(false);
     const [typeOptions, setTypeOptions] = useState<IOption[]>([]);
     const [modalError, setModalError] = useState<boolean>(false);
     const [modalSuccess, setModalSuccess] = useState<boolean>(false);
     const [modalMessage, setModalMessage] = useState<string>('');
-    const [data, setData] = useState<ICompanies>({
-        area: "",
-        city: "",
-        cnpj: "",
-        name: "",
+    const [data, setData] = useState<IEmployees>({
+        cpf: "",
+        employee_name: "",
         email: "",
-        cep: "",
         id: "",
-        number: "",
+        password: "",
+        phoneNumber: "",
+        company_name: "",
         picture: "",
-        state: "",
-        status_account: "",
-        street: "",
+        status_account: 0,
         type_account: ""
     });
 
@@ -49,18 +47,15 @@ export default function Modal(props: IModal) {
 
     function cleanValues() {
         setData({
-            area: "",
-            city: "",
-            cnpj: "",
-            name: "",
+            cpf: "",
+            employee_name: "",
             email: "",
-            cep: "",
+            password: "",
             id: "",
-            number: "",
+            phoneNumber: "",
+            company_name: "",
             picture: "",
-            state: "",
-            status_account: "",
-            street: "",
+            status_account: 0,
             type_account: ""
         });
     }
@@ -68,7 +63,7 @@ export default function Modal(props: IModal) {
     const handleClose = async () => {
         setIdSelected(null);
         cleanValues();
-        setActiveModalCompany(false);
+        setActiveModalEmployees(false);
     };
 
     async function getWithId() {
@@ -89,32 +84,17 @@ export default function Modal(props: IModal) {
         getAllTypeAccount();
     }, []);
 
-    const handleInputChange = (field: keyof ICompanies, value: string | any) => {
+    const handleInputChange = (field: keyof IEmployees, value: string | any) => {
         setData((prevData) => ({
             ...prevData,
             [field]: value
         }));
     };
 
-    async function getCepInformation() {
-        if (data.cep.length === 9) {
-            try {
-                const response = await axios.get(`https://brasilapi.com.br/api/cep/v1/${data.cep}`);
-                setData({
-                    ...data,
-                    state: response?.data?.state || '',
-                    city: response?.data?.city || '',
-                    street: response?.data?.street || ''
-                });
-            } catch (error) {
-                console.error("Erro ao buscar informações do CEP:", error);
-            }
-        }
-    }
 
     useEffect(() => {
-        getCepInformation();
-    }, [data.cep]);
+        
+    }, );
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -167,7 +147,7 @@ export default function Modal(props: IModal) {
                     setModalMessage(res?.data.message);
                     setTimeout(() => {
                         setIdSelected(null)
-                        setActiveModalCompany(false);
+                        setActiveModalEmployees(false);
                     }, 1000);
                 }
             }else{
@@ -176,7 +156,7 @@ export default function Modal(props: IModal) {
                 setModalMessage(res?.data.message);
                 setTimeout(() => {
                         cleanValues()
-                        setActiveModalCompany(false);
+                        setActiveModalEmployees(false);
                         }, 1000);
             }
         } catch (res: any) {
@@ -254,8 +234,8 @@ export default function Modal(props: IModal) {
                 <div className={styles.container__boxleft_input}>
                     <InputText
                         placeholder='Nome'
-                        value={data.name}
-                        state={(value) => handleInputChange('name', value)}
+                        value={data.employee_name}
+                        state={(value) => handleInputChange('employee_name', value)}
                         icon={LetterIcon.src}
                         type="text"
                         white={false}
@@ -271,9 +251,9 @@ export default function Modal(props: IModal) {
                         width="100%"
                     />
                     <InputText
-                        placeholder='CNPJ'
-                        value={data.cnpj}
-                        state={(value) => handleInputChange('cnpj', value)}
+                        placeholder='CPF'
+                        value={data.cpf}
+                        state={(value) => handleInputChange('cpf', value)}
                         icon={CnpjIcon.src}
                         type="text"
                         white={false}
@@ -281,10 +261,10 @@ export default function Modal(props: IModal) {
                         mask='99.999.999/9999-99'
                     />
                     <InputText
-                        placeholder='Área'
-                        value={data.area}
-                        state={(value) => handleInputChange('area', value)}
-                        icon={CompanyIcon.src}
+                        placeholder='Número de telefone'
+                        value={data.phoneNumber}
+                        state={(value) => handleInputChange('phoneNumber', value)}
+                        icon={CnpjIcon.src}
                         type="text"
                         white={false}
                         width="100%"
@@ -303,9 +283,9 @@ export default function Modal(props: IModal) {
                     </div>
                 </div>
                 <InputText
-                    placeholder='CEP'
-                    value={data.cep}
-                    state={(value) => handleInputChange('cep', value)}
+                    placeholder='Nome da Empresa'
+                    value={data.company_name}
+                    state={(value) => handleInputChange('company_name', value)}
                     icon={AddressIcon.src}
                     type="text"
                     white={false}
@@ -313,56 +293,26 @@ export default function Modal(props: IModal) {
                     mask='99999-999'
                 />
                 <InputText
-                    placeholder='Rua'
-                    value={data.street}
-                    state={(value) => handleInputChange('street', value)}
+                    placeholder='Tipo da Conta'
+                    value={data.type_account}
+                    state={(value) => handleInputChange('type_account', value)}
                     icon={AddressIcon.src}
                     type="text"
                     white={false}
                     width="100%"
                     disabled={true} // Usar readOnly ao invés de disabled
                 />
+                
                 <InputText
-                    placeholder='Cidade'
-                    value={data.city}
-                    state={(value) => handleInputChange('city', value)}
+                    placeholder='Senha'
+                    value={data.password}
+                    state={(value) => handleInputChange('password', value)}
                     icon={AddressIcon.src}
                     type="text"
                     white={false}
                     width="100%"
                     disabled={true} // Usar readOnly ao invés de disabled
                 />
-                <InputText
-                    placeholder='Estado'
-                    value={data.state}
-                    state={(value) => handleInputChange('state', value)}
-                    icon={AddressIcon.src}
-                    type="text"
-                    white={false}
-                    width="100%"
-                    disabled={true} // Usar readOnly ao invés de disabled
-                />
-                <div className={styles.container__boxright_two}>
-                    <InputText
-                        placeholder='Número'
-                        value={data.number}
-                        state={(value) => handleInputChange('number', value)}
-                        icon={NumberIcon.src}
-                        type="number"
-                        white={false}
-                        width="50%"
-                    />
-                    <SelectOption
-                        placeholder='Tipo da empresa'
-                        active={activeType}
-                        options={typeOptions}
-                        setActive={setActiveType}
-                        width="50%"
-                        value={data.type_account}
-                        setValue={(value) => handleInputChange('type_account', value)}
-                        backgroundBlue={true}
-                    />
-                </div>
                 <div className={styles.container__boxright_buttons}>
                     <button onClick={() => handleClose()} className={styles.container__boxright_buttons_close}>FECHAR</button>
                     <button onClick={() => sendRequest()} className={styles.container__boxright_buttons_add}>SALVAR</button>
