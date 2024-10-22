@@ -9,7 +9,7 @@ import { http } from "@/environment/environment";
 import { useGlobalState } from "@/context/globalState";
 import Modal from "../../../components/ModalCompanies";
 
-export default function TabEmployees() {
+export default function TabUsers() {
     const { setCompanies, allCompanies, activeModalCompany, setActiveModalCompany } = useGlobalState();
     const [search, setSearch] = useState<string>('');
     const [activeType, setActiveType] = useState<boolean>(false);
