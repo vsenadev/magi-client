@@ -20,12 +20,12 @@ export default function TableUsers() {
     const pageSize = 10;
 
     const tableHeader = [
-        { title: "ID", width: "5%", border: false },
-        { title: "Nome", width: "20%", border: true },
-        { title: "CPF", width: "20%", border: true },
-        { title: "Empresa", width: "20%", border: true },
+        { title: "ID", width: "5%", border: true },
+        { title: "Nome do Funcionário", width: "25%", border: true },
+        { title: "CPF", width: "15%", border: true },
+        { title: "Empresa", width: "10%", border: true },
         { title: "Tipo", width: "10%", border: true },
-        { title: "E-mail", width: "10%", border: true },
+        { title: "E-mail", width: "20%", border: true },
         { title: "Status", width: "10%", border: true },
         { title: "", width: "5%", border: false },
     ];
@@ -71,7 +71,7 @@ export default function TableUsers() {
                     Array.isArray(paginatedEmployees) && paginatedEmployees.length > 0 ? (
                         paginatedEmployees.map((element: IEmployees) => (
                             <div className={styles.container__table_line} key={element.id}>
-                                <div className={styles.container__table_line_picture}>
+                                <div className={styles.container__table_line_id}>
                                     <span>{element.id}</span>
                                 </div>
                                 <div className={styles.container__table_line_name}>
@@ -80,19 +80,19 @@ export default function TableUsers() {
                                 <div className={styles.container__table_line_cpf}>
                                     <span>{element.cpf}</span>
                                 </div>
-                                <div className={styles.container__table_line_type}>
+                                <div className={styles.container__table_line_company}>
                                     <span>{element.company_name}</span>
                                 </div>
                                 <div className={styles.container__table_line_type}>
                                     <span>{element.type_account}</span>
                                 </div>
-                                <div className={styles.container__table_line_type}>
+                                <div className={styles.container__table_line_email}>
                                     <span>{element.email}</span>
                                 </div>
                                 <div className={styles.container__table_line_type}>
                                     <span>{element.status_account}</span>
                                 </div>
-                                <div className={styles.container__table_line_view} onClick={() => {
+                                <div className={styles.container__table_line_picture} onClick={() => {
                                     setIdSelected(parseInt(element.id))
                                     setActiveModalCompany(true)
                                 }}>
