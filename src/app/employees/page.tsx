@@ -2,7 +2,7 @@ import styles from '@/styles/Companies.module.sass';
 import TableEmployees from "@/app/employees/Table";
 import TabEmployees from '@/app/employees/Tab';
 
-export default function Companies(){
+export default function Employees(){
     return(
         <section className={styles.container}>
             <section className={styles.container__content}>
