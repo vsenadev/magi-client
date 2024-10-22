@@ -1,0 +1,98 @@
+@import '@/styles/_variables.sass'
+
+.container
+  width: 100vw
+  height: 100vh
+  background-color: $background-color
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+
+  &__modal
+    position: absolute
+    top: 2rem
+    right: 2rem
+    max-width: 400px
+
+    div
+      font-family: $font
+
+  &__box
+    display: flex
+    flex-direction: column
+    align-items: center
+    background-color: $white
+    padding: 2rem 0
+    width: 25%
+    height: calc(45% - 4rem)
+    border-radius: 18px
+    box-shadow: rgba(33, 35, 38, 0.1) 0 10px 10px -10px
+
+    &_select
+      width: 80%
+      display: flex
+      justify-content: center
+      align-items: center
+      height: 6rem
+
+    &_input
+      display: flex
+      flex-direction: column
+      width: 80%
+      gap: 2rem
+
+  &__forgot
+    display: flex
+    width: 80%
+    height: 3rem
+    align-items: center
+    justify-content: flex-end
+
+    &_content
+      font-family: $font
+      font-size: 0.8rem
+      cursor: pointer
+
+    &_content:hover
+      color: $dark-green
+
+@media (max-width: 425px)
+  .container__box
+    width: 100%
+
+  .container__modal
+    right: 0
+
+
+@media (min-width: 426px) and (max-width: 768px)
+  .container__box
+    width: 55%
+
+  .container__modal
+    right: 0
+
+@media (min-width: 769px) and (max-width: 1024px)
+  .container__box
+    width: 45%
+
+@media (min-width: 1025px) and (max-width: 1440px)
+  .container__box
+    width: 35%
+
+.loader
+  border: 4px solid rgba(0, 0, 0, 0.1)
+  border-left-color: #F1F5F9
+  border-radius: 50%
+  width: 24px
+  height: 24px
+  animation: spin 1s linear infinite
+
+
+@keyframes spin
+  to
+    transform: rotate(360deg)
+
+
+
+

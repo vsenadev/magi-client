@@ -1,0 +1,48 @@
+{
+  "pt": {
+    "language": "Português",
+    "login_login": "Login",
+    "login_administrator": "Administrador",
+    "login_common": "Comum",
+    "login_user": "Email",
+    "login_password": "Senha",
+    "login_forget": "Esqueci minha senha",
+    "login_enter": "Entrar",
+    "login_token": "Sua sessão expirou. Por favor, faça login novamente para continuar utilizando a ferramenta.",
+    "sidebar_home": "Home",
+    "sidebar_companies": "Empresas",
+    "sidebar_users": "Usuários",
+    "sidebar_deliveries": "Entregas"
+  },
+  "en": {
+    "language": "English",
+    "login_login": "Login",
+    "login_administrator": "Adminstrador",
+    "login_common": "Common",
+    "login_user": "Email",
+    "login_password": "Password",
+    "login_forget": "Forgot my password",
+    "login_enter": "Enter",
+    "login_token": "Your session has expired. Please log in again to continue using the tool.",
+    "sidebar_home": "Home",
+    "sidebar_companies": "Companies",
+    "sidebar_users": "Users",
+    "sidebar_deliveries": "Deliveries"
+
+  },
+  "es": {
+    "language": "Español",
+    "login_login": "Iniciar sesión",
+    "login_administrator": "Administrador",
+    "login_common": "Común",
+    "login_user": "Correo electrónico",
+    "login_password": "Contraseña",
+    "login_forget": "Olvidé mi contraseña",
+    "login_enter": "Entrar",
+    "login_token": "Su sesión ha expirado. Por favor, inicie sesión nuevamente para continuar usando la herramienta.",
+    "sidebar_home": "Hogar",
+    "sidebar_companies": "Empresas",
+    "sidebar_users": "Usuarios",
+    "sidebar_deliveries": "Entregas"
+  }
+}
