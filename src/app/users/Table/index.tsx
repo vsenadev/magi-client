@@ -24,8 +24,8 @@ export default function TableUsers() {
         { title: "Nome do Funcionário", width: "25%", border: true },
         { title: "CPF", width: "15%", border: true },
         { title: "Empresa", width: "10%", border: true },
-        { title: "Tipo", width: "10%", border: true },
         { title: "E-mail", width: "20%", border: true },
+        { title: "Tipo", width: "10%", border: true },
         { title: "Status", width: "10%", border: true },
         { title: "", width: "5%", border: false },
     ];
@@ -83,16 +83,16 @@ export default function TableUsers() {
                                 <div className={styles.container__table_line_company}>
                                     <span>{element.company_name}</span>
                                 </div>
-                                <div className={styles.container__table_line_type}>
-                                    <span>{element.type_account}</span>
-                                </div>
                                 <div className={styles.container__table_line_email}>
                                     <span>{element.email}</span>
                                 </div>
                                 <div className={styles.container__table_line_type}>
+                                    <span>{element.type_account}</span>
+                                </div>
+                                <div className={styles.container__table_line_status}>
                                     <span>{element.status_account}</span>
                                 </div>
-                                <div className={styles.container__table_line_picture} onClick={() => {
+                                <div className={styles.container__table_line_view} onClick={() => {
                                     setIdSelected(parseInt(element.id))
                                     setActiveModalCompany(true)
                                 }}>
