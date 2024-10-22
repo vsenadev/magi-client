@@ -9,10 +9,10 @@ import { ICompanies } from "@/interface/Companies.interface";
 import Image from "next/image";
 import { http } from "@/environment/environment";
 
-export default function TableCompanies() {
+export default function TableEmployees() {
     const context = useContext(GlobalStateContext);
     if (!context) {
-        throw new Error("TableCompanies must be used within a GlobalStateProvider");
+        throw new Error("TableEmployees must be used within a GlobalStateProvider");
     }
     const { companies, setCompanies, allCompanies, setAllCompanies, setIdSelected, setActiveModalCompany, activeModalCompany } = context;
     const [currentPage, setCurrentPage] = useState(1);

@@ -1,6 +1,6 @@
 import styles from '@/styles/Companies.module.sass';
-import TabCompanies from "@/app/employees/Tab";
-import TableCompanies from "@/app/employees/Table";
+import TableEmployees from "@/app/employees/Table";
+import TabEmployees from '@/app/employees/Tab';
 
 export default function Companies(){
     return(
@@ -10,10 +10,10 @@ export default function Companies(){
                     <h1>Funcionários</h1>
                 </div>
                 <div className={styles.container__content_tab}>
-                    <TabCompanies/>
+                    <TabEmployees/>
                 </div>
                 <div className={styles.container__content_table}>
-                    <TableCompanies/>
+                    <TableEmployees/>
                 </div>
             </section>
         </section>
