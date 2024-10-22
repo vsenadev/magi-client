@@ -37,6 +37,7 @@ export default function TableEmployees() {
     }
 
     const totalPages = Math.ceil(companies.length / pageSize);
+    
     const paginatedCompanies = companies.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
     useEffect(() => {
