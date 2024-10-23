@@ -20,10 +20,10 @@ export default function TableUsers() {
     const pageSize = 10;
 
     const tableHeader = [
-        { title: "ID", width: "5%", border: true },
+        { title: "ID", width: "3%", border: true },
         { title: "Nome do Funcionário", width: "25%", border: true },
-        { title: "CPF", width: "15%", border: true },
-        { title: "Empresa", width: "10%", border: true },
+        { title: "CPF", width: "10%", border: true },
+        { title: "Empresa", width: "17%", border: true },
         { title: "E-mail", width: "20%", border: true },
         { title: "Tipo", width: "10%", border: true },
         { title: "Status", width: "10%", border: true },

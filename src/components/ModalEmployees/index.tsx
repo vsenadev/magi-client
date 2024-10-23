@@ -7,10 +7,10 @@ import { http } from "@/environment/environment";
 import { useEffect, useRef, useState } from "react";
 import CamIcon from "@/../public/img/cam-icon.svg";
 import CloseIcon from "@/../public/img/close-icon.svg";
+import PhoneIcon from "@/../public/img/phone-icon.svg"
 import LetterIcon from "@/../public/img/letter-icon.svg";
 import MailIcon from "@/../public/img/mail-icon.svg";
 import CnpjIcon from "@/../public/img/cnpj-icon.svg";
-import CompanyIcon from "@/../public/img/companies-icon.svg";
 import AddressIcon from "@/../public/img/address-icon.svg";
 import NumberIcon from "@/../public/img/number-icon.svg";
 import { ICompanies } from "@/interface/Companies.interface";
@@ -25,7 +25,9 @@ import { IEmployees } from '@/interface/Employees.interface';
 export default function Modal(props: IModal) {
     const { idSelected, setIdSelected, setActiveModalEmployees } = useGlobalState();
     const [activeType, setActiveType] = useState<boolean>(false);
+    const [activeAccountStatus, setActiveAccountStatus] = useState<boolean>(false);
     const [typeOptions, setTypeOptions] = useState<IOption[]>([]);
+    const [statusOptions, setStatusOptions] = useState<IOption[]>([]);
     const [modalError, setModalError] = useState<boolean>(false);
     const [modalSuccess, setModalSuccess] = useState<boolean>(false);
     const [modalMessage, setModalMessage] = useState<string>('');
@@ -38,7 +40,7 @@ export default function Modal(props: IModal) {
         phoneNumber: "",
         company_name: "",
         picture: "",
-        status_account: 0,
+        status_account: "",
         type_account: ""
     });
 
@@ -55,7 +57,7 @@ export default function Modal(props: IModal) {
             phoneNumber: "",
             company_name: "",
             picture: "",
-            status_account: 0,
+            status_account: "",
             type_account: ""
         });
     }
@@ -63,12 +65,12 @@ export default function Modal(props: IModal) {
     const handleClose = async () => {
         setIdSelected(null);
         cleanValues();
-        setActiveModalEmployees(false);
+        setActiveModalEmployees(false); 
     };
 
     async function getWithId() {
         if (idSelected !== null) {
-            await http.get(`v1/company/${idSelected}`).then((res) => {
+            await http.get(`v1/employee/${idSelected}`).then((res) => {
                 setData(res.data);
             });
         }
@@ -79,9 +81,15 @@ export default function Modal(props: IModal) {
         setTypeOptions(res.data);
     }
 
+    async function getAllStatusAccount() {
+        const res = await http.get('v1/statusaccount');
+        setStatusOptions(res.data);
+    }
+
     useEffect(() => {
         getWithId();
         getAllTypeAccount();
+        getAllStatusAccount();
     }, []);
 
     const handleInputChange = (field: keyof IEmployees, value: string | any) => {
@@ -140,7 +148,7 @@ export default function Modal(props: IModal) {
     async function sendRequest() {
         try {
             if (idSelected) {
-                const res: any = await http.put(`v1/company/${idSelected}`, data);
+                const res: any = await http.put(`v1/employee/${idSelected}`, data);
 
                 if (res?.status === 200) {
                     setModalSuccess(true);
@@ -151,7 +159,7 @@ export default function Modal(props: IModal) {
                     }, 1000);
                 }
             }else{
-                const res: any = await http.post('v1/company', data);
+                const res: any = await http.post('v1/employee', data);
                 setModalSuccess(true);
                 setModalMessage(res?.data.message);
                 setTimeout(() => {
@@ -258,13 +266,13 @@ export default function Modal(props: IModal) {
                         type="text"
                         white={false}
                         width="100%"
-                        mask='99.999.999/9999-99'
+                        mask='999.999.999-99'
                     />
                     <InputText
                         placeholder='Número de telefone'
                         value={data.phoneNumber}
                         state={(value) => handleInputChange('phoneNumber', value)}
-                        icon={CnpjIcon.src}
+                        icon={PhoneIcon.src}
                         type="text"
                         white={false}
                         width="100%"
@@ -282,28 +290,28 @@ export default function Modal(props: IModal) {
                         />
                     </div>
                 </div>
-                <InputText
-                    placeholder='Nome da Empresa'
-                    value={data.company_name}
-                    state={(value) => handleInputChange('company_name', value)}
-                    icon={AddressIcon.src}
-                    type="text"
-                    white={false}
-                    width="100%"
-                    mask='99999-999'
-                />
-                <InputText
-                    placeholder='Tipo da Conta'
-                    value={data.type_account}
-                    state={(value) => handleInputChange('type_account', value)}
-                    icon={AddressIcon.src}
-                    type="text"
-                    white={false}
-                    width="100%"
-                    disabled={true} // Usar readOnly ao invés de disabled
-                />
+                <SelectOption
+                        placeholder='Tipo da conta'
+                        active={activeType}
+                        options={typeOptions}
+                        setActive={setActiveType}
+                        width="50%"
+                        value={data.type_account}
+                        setValue={(value) => handleInputChange('type_account', value)}
+                        backgroundBlue={true}
+                    />
+                <SelectOption
+                        placeholder='Status da conta'
+                        active={activeAccountStatus}
+                        options={statusOptions}
+                        setActive={setActiveAccountStatus}
+                        width="50%"
+                        value={data.status_account}
+                        setValue={(value) => handleInputChange('status_account', value)}
+                        backgroundBlue={true}
+                    />
                 
-                <InputText
+                {/* <InputText
                     placeholder='Senha'
                     value={data.password}
                     state={(value) => handleInputChange('password', value)}
@@ -312,7 +320,7 @@ export default function Modal(props: IModal) {
                     white={false}
                     width="100%"
                     disabled={true} // Usar readOnly ao invés de disabled
-                />
+                /> */}
                 <div className={styles.container__boxright_buttons}>
                     <button onClick={() => handleClose()} className={styles.container__boxright_buttons_close}>FECHAR</button>
                     <button onClick={() => sendRequest()} className={styles.container__boxright_buttons_add}>SALVAR</button>

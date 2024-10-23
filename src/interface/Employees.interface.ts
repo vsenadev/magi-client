@@ -7,6 +7,6 @@ export interface IEmployees {
   password: string;
   phoneNumber: string;
   email: string;
-  status_account: number;
+  status_account: string;
   type_account: string;
 }
