@@ -8,8 +8,8 @@ interface GlobalStateContextProps {
   language: string;
   setLanguage: React.Dispatch<React.SetStateAction<string>>;
   text: any;
-  user: IEmployees[],
-  setUser: React.Dispatch<React.SetStateAction<IEmployees[]>>;
+  user: string,
+  setUser: React.Dispatch<React.SetStateAction<string>>;
   allUsers: IEmployees[],
   setAllUsers: React.Dispatch<React.SetStateAction<IEmployees[]>>;
   password: string;
@@ -36,7 +36,7 @@ interface GlobalStateProviderProps {
 
 export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({ children }) => {
   const [language, setLanguage] = useState<string>('pt');
-  const [user, setUser] = useState<IEmployees[]>([]);
+  const [user, setUser] = useState<string>('');
   const [allUsers, setAllUsers] = useState<IEmployees[]>([]);
   const [password, setPassword] = useState<string>('');
   const text = require('../data/language.json');
