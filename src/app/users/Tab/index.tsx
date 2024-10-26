@@ -10,7 +10,7 @@ import { useGlobalState } from "@/context/globalState";
 import Modal from "../../../components/ModalEmployees";
 
 export default function TabUsers() {
-    const { setUser, allUsers, activeModalEmployees, setActiveModalEmployees } = useGlobalState();
+    const { setAllUsers, allUsers, activeModalEmployees, setActiveModalEmployees } = useGlobalState();
     const [search, setSearch] = useState<string>('');
     const [activeType, setActiveType] = useState<boolean>(false);
     const [activeStatus, setActiveStatus] = useState<boolean>(false);
@@ -41,7 +41,7 @@ export default function TabUsers() {
 
     function filterUsers() {
         if (!search && !selectedType && !selectedStatus) {
-            setUser(allUsers);
+            setAllUsers(allUsers);
             return;
         }
 
@@ -55,7 +55,7 @@ export default function TabUsers() {
             return matchesSearch && matchesType && matchesStatus;
         });
 
-        setUser(filteredCompanies);
+        setAllUsers(filteredCompanies);
     }
 
     return (
