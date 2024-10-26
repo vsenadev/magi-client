@@ -1,12 +1,14 @@
 export interface IEmployees {
   id: string;
   picture: string;
-  employee_name: string;
-  company_name: string;
+  name: string;
   cpf: string;
-  password: string;
-  phoneNumber: string;
+  password?: string;
+  telephone: string;
   email: string;
   status_account: string;
   type_account: string;
+  company_id?: number | null;
+  status_id?: number;
+  company_name?: string;
 }

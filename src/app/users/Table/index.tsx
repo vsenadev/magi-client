@@ -8,43 +8,64 @@ import ArrowsIcon from "@/../public/img/arrows.svg";
 import { IEmployees } from "@/interface/Employees.interface";
 import Image from "next/image";
 import { http } from "@/environment/environment";
+import { parseCookies } from 'nookies';
 
 export default function TableUsers() {
     const context = useContext(GlobalStateContext);
     if (!context) {
         throw new Error("TableUsers must be used within a GlobalStateProvider");
     }
-    
-    const { user = [], setUser, allUsers, setAllUsers, setIdSelected, setActiveModalCompany, activeModalCompany } = context; // Ensure user is initialized as an array
+
+    const { user = [], setUser, allUsers, setAllUsers, setIdSelected, setActiveModalEmployees, activeModalEmployees, idSelected, companyId, setCompanyId } = context; // Ensure user is initialized as an array
     const [currentPage, setCurrentPage] = useState(1);
     const pageSize = 10;
 
     const tableHeader = [
-        { title: "ID", width: "3%", border: true },
-        { title: "Nome do Funcionário", width: "25%", border: true },
+        { title: "", width: "5%", border: true },
+        { title: "Nome", width: "25%", border: true },
         { title: "CPF", width: "10%", border: true },
-        { title: "Empresa", width: "17%", border: true },
+        { title: "Empresa", width: "25%", border: true },
         { title: "E-mail", width: "20%", border: true },
-        { title: "Tipo", width: "10%", border: true },
-        { title: "Status", width: "10%", border: true },
+        { title: "Tipo", width: "5%", border: true },
+        { title: "Status", width: "5%", border: true },
         { title: "", width: "5%", border: false },
     ];
 
     async function getEmployees() {
-        await http.get('v1/employee').then((res) => {
-            console.log(res.data)
-            setAllUsers(res.data);
-            setUser(res.data);
-        })
+        if (companyId) {
+            await http.get(`v1/employee/company/${companyId}`).then((res) => {
+                console.log(res.data)
+                setAllUsers(res.data);
+                setUser(res.data);
+            })
+        }
     }
 
     useEffect(() => {
-        getEmployees();
+        const { user_information } = parseCookies();
+
+        if (!user_information) {
+            console.log('user_information cookie not found');
+            return;
+        }
+
+        try {
+            const userInfo = JSON.parse(user_information);
+
+            if (userInfo && userInfo.id) {
+                console.log('User Info:', userInfo);
+                setCompanyId(userInfo.id);
+            } else {
+                console.error('ID not found in user information');
+            }
+        } catch (error) {
+            console.error('Error parsing user_information:', error);
+        }
     }, []);
 
     useEffect(() => {
         getEmployees();
-    }, [activeModalCompany]);
+    }, [companyId, idSelected, activeModalEmployees]);
 
     useEffect(() => {
         setCurrentPage(1);
@@ -71,11 +92,17 @@ export default function TableUsers() {
                     Array.isArray(paginatedEmployees) && paginatedEmployees.length > 0 ? (
                         paginatedEmployees.map((element: IEmployees) => (
                             <div className={styles.container__table_line} key={element.id}>
-                                <div className={styles.container__table_line_id}>
-                                    <span>{element.id}</span>
+                                <div className={styles.container__table_line_picture}>
+                                    <Image
+                                        src={element.picture}
+                                        alt='logo da empresa'
+                                        width={42}
+                                        height={42}
+                                        priority={true}
+                                    />
                                 </div>
                                 <div className={styles.container__table_line_name}>
-                                    <span>{element.employee_name}</span>
+                                    <span>{element.name}</span>
                                 </div>
                                 <div className={styles.container__table_line_cpf}>
                                     <span>{element.cpf}</span>
@@ -94,7 +121,7 @@ export default function TableUsers() {
                                 </div>
                                 <div className={styles.container__table_line_view} onClick={() => {
                                     setIdSelected(parseInt(element.id))
-                                    setActiveModalCompany(true)
+                                    setActiveModalEmployees(true)
                                 }}>
                                     <div className={styles.container__table_line_view_button}>
                                         <Image

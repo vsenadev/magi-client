@@ -2,8 +2,8 @@
 
 .container
   background-color: $white
-  width: 50%
-  height: 50%
+  width: 25%
+  height: 70%
   border-radius: 4px
   display: flex
   z-index: 11
@@ -20,15 +20,41 @@
   &__boxleft
     border-right: solid 1px $gray-border
 
-  &__boxleft, &__boxright
-    width: calc(50% - 4rem)
+  &__boxleft
+    width: calc(100% - 4rem)
     padding: 0 2rem
 
-    &_title
-      font-family: $font
-      height: 10%
+    &_header
       display: flex
+      justify-content: space-between
       align-items: center
+      height: 10%
+      
+      &_title
+        font-family: $font
+        height: 10%
+        width: 90%
+        display: flex
+        align-items: center
+      
+      &_close
+        display: flex
+        justify-content: flex-end
+        width: 100%
+
+
+        &_content
+          display: flex
+          align-items: center
+          justify-content: center
+          border-radius: 100%
+          width: 22px
+          height: 22px
+          cursor: pointer
+
+        &_content:hover
+          background-color: rgba(224, 58, 58, 0.5)
+
 
     &_image
       display: flex
@@ -48,32 +74,20 @@
     flex-direction: column
     gap: 1rem
     padding-top: 2rem
+    height: 80%
+
+    &_select
+        display: flex
+        gap: 10px
 
     &_two
       display: flex
       gap: 1rem
 
-    &_close
-      display: flex
-      justify-content: flex-end
-      width: 100%
-
-      &_content
-        display: flex
-        align-items: center
-        justify-content: center
-        border-radius: 100%
-        width: 22px
-        height: 22px
-        cursor: pointer
-
-      &_content:hover
-        background-color: rgba(224, 58, 58, 0.5)
-
     &_buttons
       display: flex
       align-items: flex-end
-      height: 10%
+      height: 50px
       justify-content: space-between
 
       button

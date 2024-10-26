@@ -1,6 +1,6 @@
 'use client';
 
-import styles from '@/components/ModalCompanies/Modal.module.sass';
+import styles from '@/components/ModalEmployees/Modal.module.sass';
 import { useGlobalState } from "@/context/globalState";
 import { IModal } from "@/interface/Modal.interface";
 import { http } from "@/environment/environment";
@@ -21,9 +21,11 @@ import { IOption } from "@/interface/SelectOption.interface";
 import axios from "axios";
 import { Alert, AlertTitle } from "@mui/material";
 import { IEmployees } from '@/interface/Employees.interface';
+import { parseCookies } from 'nookies';
+
 
 export default function Modal(props: IModal) {
-    const { idSelected, setIdSelected, setActiveModalEmployees } = useGlobalState();
+    const { idSelected, setIdSelected, activeModalEmployees, setActiveModalEmployees, companyId } = useGlobalState();
     const [activeType, setActiveType] = useState<boolean>(false);
     const [activeAccountStatus, setActiveAccountStatus] = useState<boolean>(false);
     const [typeOptions, setTypeOptions] = useState<IOption[]>([]);
@@ -33,15 +35,16 @@ export default function Modal(props: IModal) {
     const [modalMessage, setModalMessage] = useState<string>('');
     const [data, setData] = useState<IEmployees>({
         cpf: "",
-        employee_name: "",
+        name: "",
         email: "",
         id: "",
         password: "",
-        phoneNumber: "",
-        company_name: "",
+        telephone: "",
         picture: "",
         status_account: "",
-        type_account: ""
+        type_account: "",
+        company_id: companyId,
+        status_id: 1
     });
 
     const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -50,22 +53,23 @@ export default function Modal(props: IModal) {
     function cleanValues() {
         setData({
             cpf: "",
-            employee_name: "",
+            name: "",
             email: "",
             password: "",
             id: "",
-            phoneNumber: "",
-            company_name: "",
+            telephone: "",
             picture: "",
             status_account: "",
-            type_account: ""
+            type_account: "",
+            company_id: companyId,
+            status_id: 0,
         });
     }
 
     const handleClose = async () => {
         setIdSelected(null);
         cleanValues();
-        setActiveModalEmployees(false); 
+        setActiveModalEmployees(false);
     };
 
     async function getWithId() {
@@ -98,11 +102,6 @@ export default function Modal(props: IModal) {
             [field]: value
         }));
     };
-
-
-    useEffect(() => {
-        
-    }, );
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -158,14 +157,15 @@ export default function Modal(props: IModal) {
                         setActiveModalEmployees(false);
                     }, 1000);
                 }
-            }else{
+            } else {
                 const res: any = await http.post('v1/employee', data);
                 setModalSuccess(true);
                 setModalMessage(res?.data.message);
                 setTimeout(() => {
-                        cleanValues()
-                        setActiveModalEmployees(false);
-                        }, 1000);
+                    setIdSelected(null)
+                    cleanValues()
+                    setActiveModalEmployees(false);
+                }, 1000);
             }
         } catch (res: any) {
             setModalError(true);
@@ -192,7 +192,19 @@ export default function Modal(props: IModal) {
                 </div>
             )}
             <div className={styles.container__boxleft}>
-                <h1 className={styles.container__boxleft_title}>{idSelected !== null ? 'Visualizar' : 'Adicionar'} {props.title}</h1>
+            <div className={styles.container__boxleft_header}>
+            <h1 className={styles.container__boxleft_header_title}>{idSelected !== null ? 'Visualizar' : 'Adicionar'} {props.title}</h1>
+                <div className={styles.container__boxleft_header_close}>
+                    <div className={styles.container__boxleft_header_close_content} onClick={() => handleClose()}>
+                        <Image
+                            src={CloseIcon}
+                            alt='Fechar'
+                            width={12}
+                            height={12}
+                        />   
+                    </div>
+                </div>
+            </div>
                 <div className={styles.container__boxleft_image}>
                     {
                         previewImage || data.picture ? (
@@ -242,8 +254,8 @@ export default function Modal(props: IModal) {
                 <div className={styles.container__boxleft_input}>
                     <InputText
                         placeholder='Nome'
-                        value={data.employee_name}
-                        state={(value) => handleInputChange('employee_name', value)}
+                        value={data.name}
+                        state={(value) => handleInputChange('name', value)}
                         icon={LetterIcon.src}
                         type="text"
                         white={false}
@@ -270,60 +282,28 @@ export default function Modal(props: IModal) {
                     />
                     <InputText
                         placeholder='Número de telefone'
-                        value={data.phoneNumber}
-                        state={(value) => handleInputChange('phoneNumber', value)}
+                        value={data.telephone}
+                        state={(value) => handleInputChange('telephone', value)}
                         icon={PhoneIcon.src}
                         type="text"
                         white={false}
                         width="100%"
+                        mask='99999999999'
                     />
-                </div>
-            </div>
-            <div className={styles.container__boxright}>
-                <div className={styles.container__boxright_close}>
-                    <div className={styles.container__boxright_close_content} onClick={() => handleClose()}>
-                        <Image
-                            src={CloseIcon}
-                            alt='Fechar'
-                            width={12}
-                            height={12}
-                        />
-                    </div>
-                </div>
-                <SelectOption
+                    <SelectOption
                         placeholder='Tipo da conta'
                         active={activeType}
                         options={typeOptions}
                         setActive={setActiveType}
-                        width="50%"
+                        width="98.5%"
                         value={data.type_account}
                         setValue={(value) => handleInputChange('type_account', value)}
                         backgroundBlue={true}
                     />
-                <SelectOption
-                        placeholder='Status da conta'
-                        active={activeAccountStatus}
-                        options={statusOptions}
-                        setActive={setActiveAccountStatus}
-                        width="50%"
-                        value={data.status_account}
-                        setValue={(value) => handleInputChange('status_account', value)}
-                        backgroundBlue={true}
-                    />
-                
-                {/* <InputText
-                    placeholder='Senha'
-                    value={data.password}
-                    state={(value) => handleInputChange('password', value)}
-                    icon={AddressIcon.src}
-                    type="text"
-                    white={false}
-                    width="100%"
-                    disabled={true} // Usar readOnly ao invés de disabled
-                /> */}
-                <div className={styles.container__boxright_buttons}>
+                    <div className={styles.container__boxright_buttons}>
                     <button onClick={() => handleClose()} className={styles.container__boxright_buttons_close}>FECHAR</button>
                     <button onClick={() => sendRequest()} className={styles.container__boxright_buttons_add}>SALVAR</button>
+                </div>
                 </div>
             </div>
         </div>

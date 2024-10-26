@@ -47,7 +47,7 @@ export default function TabUsers() {
 
         const filteredCompanies = allUsers.filter(employee => {
             const matchesSearch =
-            employee.employee_name.toLowerCase().includes(search.toLowerCase()) ||
+            employee.name.toLowerCase().includes(search.toLowerCase()) ||
             employee.cpf.includes(search);
             const matchesType = selectedType ? employee.type_account === selectedType : true;
             const matchesStatus = selectedStatus ? String(employee.status_account) === selectedStatus : true;
