@@ -7,10 +7,10 @@ import SearchIcon from '@/../public/img/search-icon.svg';
 import { IOption } from "@/interface/SelectOption.interface";
 import { http } from "@/environment/environment";
 import { useGlobalState } from "@/context/globalState";
-import Modal from "../../../components/ModalEmployees";
+import Modal from "../../../components/ModalProducts";
 
 export default function TabUsers() {
-    const { setAllUsers, allUsers, activeModalEmployees, setActiveModalEmployees } = useGlobalState();
+    const { setAllUsers, allUsers, activeModalProducts, setActiveModalProducts } = useGlobalState();
     const [search, setSearch] = useState<string>('');
     const [activeType, setActiveType] = useState<boolean>(false);
     const [activeStatus, setActiveStatus] = useState<boolean>(false);
@@ -61,13 +61,13 @@ export default function TabUsers() {
     return (
         <div className={styles.container}>
             <Tab
-                searchPlaceholder="Pesquise por nome ou CNPJ"
+                searchPlaceholder="Pesquise pelo nome do produto"
                 searchValue={search}
                 searchState={setSearch}
                 searchIcon={SearchIcon.src}
                 searchType='text'
                 searchWidth="35%"
-                firstSelectOptionPlaceholder="Tipo de Funcionário"
+                firstSelectOptionPlaceholder="Tipo de produto"
                 firstSelectOptionActive={activeType}
                 firstSelectOptionOptions={typeOptions}
                 firstSelectOptionSetActive={setActiveType}
@@ -79,14 +79,14 @@ export default function TabUsers() {
                 secondSelectOptionSetActive={setActiveStatus}
                 secondSelectOptionValue={selectedStatus}
                 secondSelectOptionSetValue={setSelectedStatus}
-                buttonText='ADICIONAR FUNCIONÁRIO'
-                buttonAction={setActiveModalEmployees}
+                buttonText='ADICIONAR PRODUTO'
+                buttonAction={setActiveModalProducts}
             />
             {
-                activeModalEmployees && (
+                activeModalProducts && (
                     <section className={styles.container__modal}>
                         <Modal
-                            title='Funcionário'
+                            title='Produto'
                         />
                     </section>
                 )

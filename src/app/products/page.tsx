@@ -7,7 +7,7 @@ export default function Products(){
         <section className={styles.container}>
             <section className={styles.container__content}>
                 <div className={styles.container__content_title}>
-                    <h1>Empresas</h1>
+                    <h1>Produtos</h1>
                 </div>
                 <div className={styles.container__content_tab}>
                     <TabProducts/>

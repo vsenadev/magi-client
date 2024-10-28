@@ -23,8 +23,8 @@ export default function TableUsers() {
     const tableHeader = [
         { title: "", width: "5%", border: true },
         { title: "Nome", width: "25%", border: true },
-        { title: "CPF", width: "10%", border: true },
-        { title: "Empresa", width: "25%", border: true },
+        { title: "CPF", width: "15%", border: true },
+        { title: "Empresa", width: "20%", border: true },
         { title: "E-mail", width: "20%", border: true },
         { title: "Tipo", width: "5%", border: true },
         { title: "Status", width: "5%", border: true },
