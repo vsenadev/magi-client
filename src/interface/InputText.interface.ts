@@ -3,7 +3,7 @@ import React from "react";
 export interface IInputText {
     placeholder: string;
     value: string | number | null;
-    state: React.Dispatch<React.SetStateAction<string | number>>;
+    state: React.Dispatch<React.SetStateAction<string>>;
     icon: string;
     type: string;
     white: boolean;

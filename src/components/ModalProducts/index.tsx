@@ -1,6 +1,6 @@
 'use client';
 
-import styles from '@/components/ModalEmployees/Modal.module.sass';
+import styles from '@/components/ModalProducts/Modal.module.sass';
 import { useGlobalState } from "@/context/globalState";
 import { IModal } from "@/interface/Modal.interface";
 import { http } from "@/environment/environment";
@@ -73,26 +73,17 @@ export default function Modal(props: IModal) {
 
     async function getWithId() {
         if (idSelected !== null) {
+            console.log(idSelected)
             await http.get(`v1/product/${idSelected}`).then((res) => {
+                console.log(res.data)
                 setData(res.data);
             });
         }
     }
 
-    async function getAllTypeAccount() {
-        const res = await http.get('v1/typeaccount');
-        setTypeOptions(res.data);
-    }
-
-    async function getAllStatusAccount() {
-        const res = await http.get('v1/statusaccount');
-        setStatusOptions(res.data);
-    }
 
     useEffect(() => {
         getWithId();
-        getAllTypeAccount();
-        getAllStatusAccount();
     }, []);
 
     const handleInputChange = (field: keyof IProduct, value: string | any) => {
@@ -107,7 +98,6 @@ export default function Modal(props: IModal) {
         data.length = Number(data.length)
         data.height = Number(data.height)
         data.width = Number(data.width)
-        console.log(data)
         try {
             if (idSelected) {
                 const res: any = await http.put(`v1/product/${idSelected}`, data);
@@ -199,7 +189,7 @@ export default function Modal(props: IModal) {
                     />
                     <InputText
                         placeholder='Tamanho do produto'
-                        value={data.length}
+                        value={data.lenght}
                         state={(value) => handleInputChange('length', value)}
                         icon={HeightProduct.src}
                         type="number"

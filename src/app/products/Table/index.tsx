@@ -32,9 +32,7 @@ export default function TableUsers() {
 
     async function getProducts() {
         if (companyId) {
-            console.log("entrou")
             await http.get(`v1/product`).then((res) => {
-                console.log(res.data)
                 setAllProducts(res.data);
                 setProduct(res.data);
             })
@@ -110,7 +108,7 @@ export default function TableUsers() {
                                     <span>{element.width}</span>
                                 </div>
                                 <div className={styles.container__table_line_view} onClick={() => {
-                                    setIdSelected(parseInt(element.name))
+                                    setIdSelected(parseInt(element.id))
                                     setActiveModalProducts(true)
                                 }}>
                                     <div className={styles.container__table_line_view_button}>
