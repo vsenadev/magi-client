@@ -12,7 +12,8 @@
     "sidebar_home": "Home",
     "sidebar_companies": "Empresas",
     "sidebar_users": "Usuários",
-    "sidebar_deliveries": "Entregas"
+    "sidebar_deliveries": "Entregas",
+    "sidebar_products": "Produtos"
   },
   "en": {
     "language": "English",
@@ -27,7 +28,8 @@
     "sidebar_home": "Home",
     "sidebar_companies": "Companies",
     "sidebar_users": "Users",
-    "sidebar_deliveries": "Deliveries"
+    "sidebar_deliveries": "Deliveries",
+    "sidebar_products": "Products"
 
   },
   "es": {
@@ -43,6 +45,7 @@
     "sidebar_home": "Hogar",
     "sidebar_companies": "Empresas",
     "sidebar_users": "Usuarios",
-    "sidebar_deliveries": "Entregas"
+    "sidebar_deliveries": "Entregas",
+    "sidebar_products": "Productos"
   }
 }

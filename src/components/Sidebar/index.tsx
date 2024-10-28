@@ -16,6 +16,7 @@ import MagiBigLogo from '@/../public/img/magi-big-logo.svg';
 import {parseCookies} from "nookies";
 import Link from "next/link";
 import {IUser} from "@/interface/User.interface";
+import ProductsIcon from "@/../public/img/product-icon.svg"
 
 
 export default function Sidebar(){
@@ -55,6 +56,12 @@ export default function Sidebar(){
             icon: DeliveriesLogo,
             allowed: [1, 2, 3],
             redirect: '/deliveries'
+        },
+        {
+            title: text?.[language].sidebar_products,
+            icon: ProductsIcon,
+            allowed: [1, 2, 3],
+            redirect: '/products'
         }
     ];
 
