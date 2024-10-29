@@ -1,11 +1,15 @@
-import styles from './Tab.module.sass'
+import styles from './Tab.module.sass';
 import InputText from "@/components/InputText";
 import SelectOption from "@/components/SelectOption";
-import {ITab} from "@/interface/Tab.interface";
+import { ITab } from "@/interface/Tab.interface";
 
-export default function Tab(props: ITab){
+interface ITabExtended extends ITab {
+    showFirstSelect?: boolean;
+    showSecondSelect?: boolean;
+}
 
-    return(
+export default function Tab(props: ITabExtended) {
+    return (
         <div className={styles.container}>
             <InputText
                 placeholder={props.searchPlaceholder}
@@ -16,27 +20,31 @@ export default function Tab(props: ITab){
                 white={true}
                 width={props.searchWidth}
             />
-            <SelectOption
-                placeholder={props.firstSelectOptionPlaceholder}
-                active={props.firstSelectOptionActive}
-                options={props.firstSelectOptionOptions}
-                setActive={props.firstSelectOptionSetActive}
-                width="20%"
-                value={props.firstSelectOptionValue}
-                setValue={props.firstSelectOptionSetValue}
-            />
-            <SelectOption
-                placeholder={props.secondSelectOptionPlaceholder}
-                active={props.secondSelectOptionActive}
-                options={props.secondSelectOptionOptions}
-                setActive={props.secondSelectOptionSetActive}
-                width="20%"
-                value={props.secondSelectOptionValue}
-                setValue={props.secondSelectOptionSetValue}
-            />
+            {props.showFirstSelect && (
+                <SelectOption
+                    placeholder={props.firstSelectOptionPlaceholder}
+                    active={props.firstSelectOptionActive}
+                    options={props.firstSelectOptionOptions}
+                    setActive={props.firstSelectOptionSetActive}
+                    width="20%"
+                    value={props.firstSelectOptionValue}
+                    setValue={props.firstSelectOptionSetValue}
+                />
+            )}
+            {props.showSecondSelect && (
+                <SelectOption
+                    placeholder={props.secondSelectOptionPlaceholder}
+                    active={props.secondSelectOptionActive}
+                    options={props.secondSelectOptionOptions}
+                    setActive={props.secondSelectOptionSetActive}
+                    width="20%"
+                    value={props.secondSelectOptionValue}
+                    setValue={props.secondSelectOptionSetValue}
+                />
+            )}
             <button
                 onClick={() => props.buttonAction(true)}
                 className={styles.container__new}>{props.buttonText}</button>
         </div>
-    )
+    );
 }

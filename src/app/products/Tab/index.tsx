@@ -10,7 +10,7 @@ import { useGlobalState } from "@/context/globalState";
 import Modal from "../../../components/ModalProducts";
 
 export default function TabUsers() {
-    const { setAllUsers, allUsers, activeModalProducts, setActiveModalProducts } = useGlobalState();
+    const { setProduct, allProducts, activeModalProducts, setActiveModalProducts } = useGlobalState();
     const [search, setSearch] = useState<string>('');
     const [activeType, setActiveType] = useState<boolean>(false);
     const [activeStatus, setActiveStatus] = useState<boolean>(false);
@@ -19,43 +19,23 @@ export default function TabUsers() {
     const [selectedType, setSelectedType] = useState<string>('');
     const [selectedStatus, setSelectedStatus] = useState<string>('');
 
-    async function getAllTypeAccount() {
-        const res = await http.get('v1/typeaccount');
-        setTypeOptions([{value: '', name: 'Sem filtro'}, ...res.data]);
-
-    }
-
-    async function getAllStatus() {
-        const res = await http.get('v1/statusaccount');
-        setStatusOptions([{value: '', name: 'Sem filtro'}, ...res.data]);
-    }
-
     useEffect(() => {
-        getAllTypeAccount();
-        getAllStatus();
-    }, []);
-
-    useEffect(() => {
-        filterUsers();
+        filterProducts();
     }, [search, selectedType, selectedStatus]);
 
-    function filterUsers() {
+    function filterProducts() {
         if (!search && !selectedType && !selectedStatus) {
-            setAllUsers(allUsers);
+            setProduct(allProducts);
             return;
         }
 
-        const filteredCompanies = allUsers.filter(employee => {
+        const filteredProducts = allProducts.filter(product => {
             const matchesSearch =
-            employee.name.toLowerCase().includes(search.toLowerCase()) ||
-            employee.cpf.includes(search);
-            const matchesType = selectedType ? employee.type_account === selectedType : true;
-            const matchesStatus = selectedStatus ? String(employee.status_account) === selectedStatus : true;
-
-            return matchesSearch && matchesType && matchesStatus;
+            product.name.toLowerCase().includes(search.toLowerCase());
+            return matchesSearch;
         });
 
-        setAllUsers(filteredCompanies);
+        setProduct(filteredProducts);
     }
 
     return (
@@ -81,6 +61,8 @@ export default function TabUsers() {
                 secondSelectOptionSetValue={setSelectedStatus}
                 buttonText='ADICIONAR PRODUTO'
                 buttonAction={setActiveModalProducts}
+                showFirstSelect={false}
+                showSecondSelect={false}
             />
             {
                 activeModalProducts && (

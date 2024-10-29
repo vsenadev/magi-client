@@ -27,7 +27,8 @@ import axios from "axios";
 import { Alert, AlertTitle } from "@mui/material";
 import { IProduct } from '@/interface/Products.interface';
 import { parseCookies } from 'nookies';
-
+import { CurrencyInput } from 'react-currency-mask';
+import CurrencyInputText from '../CurrencyInput';
 
 export default function Modal(props: IModal) {
     const { idSelected, setIdSelected, activeModalProducts, setActiveModalProducts, companyId } = useGlobalState();
@@ -43,7 +44,7 @@ export default function Modal(props: IModal) {
         type: "",
         id: "",
         value: null,
-        length: null,
+        lenght: null,
         width: null,
         height: null,
         company_id: companyId || 0,
@@ -58,7 +59,7 @@ export default function Modal(props: IModal) {
             type: "",
             id: "",
             value: null,
-            length: null,
+            lenght: null,
             width: null,
             height: null,
             company_id: companyId || 0,
@@ -95,7 +96,7 @@ export default function Modal(props: IModal) {
 
     async function sendRequest() {
         data.value = Number(data.value)
-        data.length = Number(data.length)
+        data.lenght = Number(data.lenght)
         data.height = Number(data.height)
         data.width = Number(data.width)
         try {
@@ -177,25 +178,23 @@ export default function Modal(props: IModal) {
                         white={false}
                         width="100%"
                     />
-                    <InputText
-                        placeholder='Valor do produto (R$)'
+                    <CurrencyInputText
+                        placeholder="Valor do produto (R$)"
                         value={data.value}
                         state={(value) => handleInputChange('value', value)}
+                        decimalSeparator=","
+                        groupSeparator="."
                         icon={ValueProduct.src}
-                        type="number"
-                        white={false}
-                        width="100%"
-                        mask='99999.99'
                     />
                     <InputText
                         placeholder='Tamanho do produto'
                         value={data.lenght}
-                        state={(value) => handleInputChange('length', value)}
+                        state={(value) => handleInputChange('lenght', value)}
                         icon={HeightProduct.src}
                         type="number"
                         white={false}
                         width="100%"
-                        mask='99999'
+                        mask='9999'
                     />
                     <InputText
                         placeholder='Largura do Produto (Cm)'
@@ -205,7 +204,7 @@ export default function Modal(props: IModal) {
                         type="number"
                         white={false}
                         width="100%"
-                        mask='99999.9'
+                        mask='999'
                     />
                     <InputText
                         placeholder='Altura do Produto (Cm)'
@@ -215,7 +214,7 @@ export default function Modal(props: IModal) {
                         type="number"
                         white={false}
                         width="100%"
-                        mask='99999.9'
+                        mask='999'
                     />
                     <div className={styles.container__boxright_buttons}>
                         <button onClick={() => handleClose()} className={styles.container__boxright_buttons_close}>FECHAR</button>

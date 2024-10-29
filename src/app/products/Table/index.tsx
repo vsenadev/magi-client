@@ -16,7 +16,7 @@ export default function TableUsers() {
         throw new Error("TableUsers must be used within a GlobalStateProvider");
     }
 
-    const { product = [], setProduct, allProducts, setAllProducts, setIdSelected, setActiveModalProducts, activeModalProducts, idSelected, companyId, setCompanyId } = context;
+    const { product, setProduct, allProducts, setAllProducts, setIdSelected, setActiveModalProducts, activeModalProducts, idSelected, companyId, setCompanyId } = context;
     const [currentPage, setCurrentPage] = useState(1);
     const pageSize = 10;
 
@@ -89,7 +89,7 @@ export default function TableUsers() {
                     Array.isArray(paginatedProducts) && paginatedProducts.length > 0 ? (
                         paginatedProducts.map((element: IProduct) => (
                             <div className={styles.container__table_line} key={element.id}>
-                                <div className={styles.container__table_line_view}>
+                                <div className={styles.container__table_line_id}>
                                     <span>{element.id}</span>
                                 </div>
                                 <div className={styles.container__table_line_name}>
@@ -101,7 +101,7 @@ export default function TableUsers() {
                                 <div className={styles.container__table_line_lenght}>
                                     <span>{element.lenght}</span>
                                 </div>
-                                <div className={styles.container__table_line_type}>
+                                <div className={styles.container__table_line_height}>
                                     <span>{element.height}</span>
                                 </div>
                                 <div className={styles.container__table_line_width}>

@@ -81,6 +81,8 @@ export default function TabUsers() {
                 secondSelectOptionSetValue={setSelectedStatus}
                 buttonText='ADICIONAR FUNCIONÁRIO'
                 buttonAction={setActiveModalEmployees}
+                showFirstSelect={true}
+                showSecondSelect={true}
             />
             {
                 activeModalEmployees && (
