@@ -1,6 +1,6 @@
 'use client';
 
-import styles from '@/app/products/Table/Table.module.sass';
+import styles from '@/app/deliveries/Table/Table.module.sass';
 import { useContext, useEffect, useState } from "react";
 import { GlobalStateContext } from "@/context/globalState";
 import HeaderTable from "@/components/Table";
@@ -8,7 +8,7 @@ import ArrowsIcon from "@/../public/img/arrows.svg";
 import Image from "next/image";
 import { http } from "@/environment/environment";
 import { parseCookies } from 'nookies';
-import { IProduct } from '@/interface/Products.interface';
+import { IDelivery } from '@/interface/Deliveries.interface';
 
 export default function TableUsers() {
     const context = useContext(GlobalStateContext);
@@ -16,27 +16,27 @@ export default function TableUsers() {
         throw new Error("TableUsers must be used within a GlobalStateProvider");
     }
 
-    const { product, setProduct, allProducts, setAllProducts, setIdSelected, setActiveModalProducts, activeModalProducts, idSelected, companyId, setCompanyId } = context;
+    const { delivery, setDelivery, allDeliveries, setAllDeliveries, setIdSelected, setActiveModalDelivery, activeModalDelivery, idSelected, companyId, setCompanyId } = context;
     const [currentPage, setCurrentPage] = useState(1);
     const pageSize = 10;
 
     const tableHeader = [
-        { title: "ID", width: "5%", border: true },
         { title: "Nome", width: "15%", border: true },
-        { title: "Tipo", width: "15%", border: true },
-        { title: "Comprimento", width: "15%", border: true },
-        { title: "Altura", width: "15%", border: true },
-        { title: "Largura", width: "15%", border: true },
-        { title: "Preço", width: "15%", border: true },
+        { title: "Remetente", width: "15%", border: true },
+        { title: "Envio - Previsto", width: "15%", border: true },
+        { title: "Status", width: "15%", border: true },
+        { title: "Valor Transportado", width: "20%", border: true },
+        { title: "Distância", width: "15%", border: true },
+        { title: "", width: "5%", border: true },
         { title: "", width: "5%", border: false },
     ];
 
-    async function getProducts() {
+    async function getDeliveries() {
         if (companyId) {
-            await http.get(`v1/product/company/${companyId}`).then((res) => {
+            await http.get(`v1/delivery/company/${companyId}`).then((res) => {
                 console.log(res.data)
-                setAllProducts(res.data);
-                setProduct(res.data);
+                setAllDeliveries(res.data);
+                setDelivery(res.data);
             })
         }
     }
@@ -64,16 +64,16 @@ export default function TableUsers() {
     }, []);
 
     useEffect(() => {
-        getProducts();
-    }, [companyId, idSelected, activeModalProducts]);
+        getDeliveries();
+    }, [companyId, idSelected, activeModalDelivery]);
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [product]);
+    }, [delivery]);
 
-    const totalPages = Math.ceil(product.length / pageSize);
+    const totalPages = Math.ceil(delivery.length / pageSize);
 
-    const paginatedProducts = Array.isArray(product) ? product.slice((currentPage - 1) * pageSize, currentPage * pageSize) : [];
+    const paginatedDeliveries = Array.isArray(delivery) ? delivery.slice((currentPage - 1) * pageSize, currentPage * pageSize) : [];
 
     const handlePreviousPage = () => {
         setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
@@ -88,38 +88,49 @@ export default function TableUsers() {
             <HeaderTable header={tableHeader} />
             <div className={styles.container__table}>
                 {
-                    Array.isArray(paginatedProducts) && paginatedProducts.length > 0 ? (
-                        paginatedProducts.map((element: IProduct) => (
+                    Array.isArray(paginatedDeliveries) && paginatedDeliveries.length > 0 ? (
+                        paginatedDeliveries.map((element: IDelivery) => (
                             <div className={styles.container__table_line} key={element.id}>
-                                <div className={styles.container__table_line_id}>
-                                    <span>{element.id}</span>
-                                </div>
                                 <div className={styles.container__table_line_name}>
                                     <span>{element.name}</span>
                                 </div>
                                 <div className={styles.container__table_line_name}>
-                                    <span>{element.type}</span>
+                                    <span>{element.sender}</span>
                                 </div>
                                 <div className={styles.container__table_line_name}>
-                                    <span>{element.lenght + ' cm'}</span>
+                                    <span>{element.send_date+ ' - ' + element.expectedDate}</span>
                                 </div>
                                 <div className={styles.container__table_line_name}>
-                                    <span>{element.height + ' cm'}</span>
+                                    <span>{element.status}</span>
                                 </div>
                                 <div className={styles.container__table_line_name}>
-                                    <span>{element.width + ' cm'}</span>
+                                    <span>{element.value}</span>
                                 </div>
                                 <div className={styles.container__table_line_name}>
-                                    <span>{'R$ ' + element.value}</span>
+                                    <span>{element.distance}</span>
                                 </div>
                                 <div className={styles.container__table_line_view} onClick={() => {
                                     setIdSelected(parseInt(element.id))
-                                    setActiveModalProducts(true)
+                                    setActiveModalDelivery(true)
                                 }}>
                                     <div className={styles.container__table_line_view_button}>
                                         <Image
                                             src={ArrowsIcon}
-                                            alt='visualizar produto'
+                                            alt='visualizar entrega'
+                                            width={18}
+                                            height={18}
+                                            priority={true}
+                                        />
+                                    </div>
+                                </div>
+                                <div className={styles.container__table_line_view} onClick={() => {
+                                    setIdSelected(parseInt(element.id))
+                                    setActiveModalDelivery(true)
+                                }}>
+                                    <div className={styles.container__table_line_view_button}>
+                                        <Image
+                                            src={ArrowsIcon}
+                                            alt='baixar pdf entrega'
                                             width={18}
                                             height={18}
                                             priority={true}
@@ -129,7 +140,7 @@ export default function TableUsers() {
                             </div>
                         ))
                     ) : (
-                        <p>No products to display</p>
+                        <p>No deliveries to display</p>
                     )
                 }
             </div>

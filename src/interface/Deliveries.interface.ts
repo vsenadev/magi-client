@@ -1,0 +1,30 @@
+export interface IDelivery {
+  id: string;
+  name: string;
+  sender: string;
+  recipient: string;
+  send_date: Date;
+  expectedDate: Date;
+  routeId: string;
+  startingAddress: number;
+  destinationAddress: number;
+  startingCep: string;
+  startingNeighborhood: string;
+  startingCity: string;
+  startingNumber: number;
+  startingState: string;
+  startingStreet: string;
+  destinationCep: string;
+  destinationNeighborhood: string;
+  destinationCity: string;
+  destinationNumber: number;
+  destinationState: string;
+  destinationStreet: string;
+  expectedRoute: string;
+  tracedRoute: string;
+  products: string;
+  distance: number;
+  value: string;
+  status: string;
+  pdf: any;
+}
