@@ -16,7 +16,7 @@ export default function TableUsers() {
         throw new Error("TableUsers must be used within a GlobalStateProvider");
     }
 
-    const { user = [], setUser, allUsers, setAllUsers, setIdSelected, setActiveModalEmployees, activeModalEmployees, idSelected, companyId, setCompanyId } = context; // Ensure user is initialized as an array
+    const { user, setUser, allUsers, setAllUsers, setIdSelected, setActiveModalEmployees, activeModalEmployees, idSelected, companyId, setCompanyId } = context;
     const [currentPage, setCurrentPage] = useState(1);
     const pageSize = 10;
 
@@ -34,7 +34,6 @@ export default function TableUsers() {
     async function getEmployees() {
         if (companyId) {
             await http.get(`v1/employee/company/${companyId}`).then((res) => {
-                console.log(res.data)
                 setAllUsers(res.data);
                 setUser(res.data);
             })
@@ -72,9 +71,7 @@ export default function TableUsers() {
     }, [user]);
 
     const totalPages = Math.ceil(user.length / pageSize);
-
-    // Ensure paginatedEmployees is calculated only if user is an array
-    const paginatedEmployees = Array.isArray(user) ? user.slice((currentPage - 1) * pageSize, currentPage * pageSize) : [];
+    const paginatedEmployees = user.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
     const handlePreviousPage = () => {
         setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));

@@ -9,8 +9,8 @@ interface GlobalStateContextProps {
   language: string;
   setLanguage: React.Dispatch<React.SetStateAction<string>>;
   text: any;
-  user: string,
-  setUser: React.Dispatch<React.SetStateAction<string>>;
+  user: IEmployees[],
+  setUser: React.Dispatch<React.SetStateAction<IEmployees[]>>;
   allUsers: IEmployees[],
   setAllUsers: React.Dispatch<React.SetStateAction<IEmployees[]>>;
   product: string,
@@ -43,7 +43,7 @@ interface GlobalStateProviderProps {
 
 export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({ children }) => {
   const [language, setLanguage] = useState<string>('pt');
-  const [user, setUser] = useState<string>('');
+  const [user, setUser] = useState<IEmployees[]>([]);
   const [allUsers, setAllUsers] = useState<IEmployees[]>([]);
   const [product, setProduct] = useState<string>('');
   const [allProducts, setAllProducts] = useState<IProduct[]>([]);

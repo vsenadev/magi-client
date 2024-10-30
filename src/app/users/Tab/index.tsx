@@ -10,7 +10,7 @@ import { useGlobalState } from "@/context/globalState";
 import Modal from "../../../components/ModalEmployees";
 
 export default function TabUsers() {
-    const { setAllUsers, allUsers, activeModalEmployees, setActiveModalEmployees } = useGlobalState();
+    const { setUser, allUsers, activeModalEmployees, setActiveModalEmployees } = useGlobalState();
     const [search, setSearch] = useState<string>('');
     const [activeType, setActiveType] = useState<boolean>(false);
     const [activeStatus, setActiveStatus] = useState<boolean>(false);
@@ -41,39 +41,39 @@ export default function TabUsers() {
 
     function filterUsers() {
         if (!search && !selectedType && !selectedStatus) {
-            setAllUsers(allUsers);
+            setUser(allUsers);
             return;
         }
 
-        const filteredCompanies = allUsers.filter(employee => {
+        const filteredUsers = allUsers.filter(employee => {
             const matchesSearch =
-            employee.name.toLowerCase().includes(search.toLowerCase()) ||
-            employee.cpf.includes(search);
+                employee.name.toLowerCase().includes(search.toLowerCase()) ||
+                employee.cpf.includes(search);
             const matchesType = selectedType ? employee.type_account === selectedType : true;
             const matchesStatus = selectedStatus ? String(employee.status_account) === selectedStatus : true;
 
             return matchesSearch && matchesType && matchesStatus;
         });
 
-        setAllUsers(filteredCompanies);
+        setUser(filteredUsers);
     }
 
     return (
         <div className={styles.container}>
             <Tab
-                searchPlaceholder="Pesquise por nome ou CNPJ"
+                searchPlaceholder="Pesquise por nome ou CPF"
                 searchValue={search}
                 searchState={setSearch}
                 searchIcon={SearchIcon.src}
                 searchType='text'
                 searchWidth="35%"
-                firstSelectOptionPlaceholder="Tipo de Funcionário"
+                firstSelectOptionPlaceholder="Tipo de funcionário"
                 firstSelectOptionActive={activeType}
                 firstSelectOptionOptions={typeOptions}
                 firstSelectOptionSetActive={setActiveType}
                 firstSelectOptionValue={selectedType}
                 firstSelectOptionSetValue={setSelectedType}
-                secondSelectOptionPlaceholder="Status"
+                secondSelectOptionPlaceholder="Status do funcionário"
                 secondSelectOptionActive={activeStatus}
                 secondSelectOptionOptions={statusOptions}
                 secondSelectOptionSetActive={setActiveStatus}
