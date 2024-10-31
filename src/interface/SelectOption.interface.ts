@@ -5,7 +5,7 @@ export interface ISelectOption {
     setActive: (active: boolean) => void;
     options: IOption[];
     width: string;
-    value: string;
+    value: string | undefined;
     setValue: (value: string) => void;
 }
 

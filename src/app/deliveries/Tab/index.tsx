@@ -7,10 +7,10 @@ import SearchIcon from '@/../public/img/search-icon.svg';
 import { IOption } from "@/interface/SelectOption.interface";
 import { http } from "@/environment/environment";
 import { useGlobalState } from "@/context/globalState";
-import Modal from "../../../components/ModalProducts";
+import Modal from "../../../components/ModalDeliveries";
 
 export default function TabUsers() {
-    const { setProduct, allProducts, activeModalProducts, setActiveModalProducts } = useGlobalState();
+    const { setDelivery, allDeliveries, activeModalDelivery, setActiveModalDelivery } = useGlobalState();
     const [search, setSearch] = useState<string>('');
     const [activeType, setActiveType] = useState<boolean>(false);
     const [activeStatus, setActiveStatus] = useState<boolean>(false);
@@ -20,34 +20,34 @@ export default function TabUsers() {
     const [selectedStatus, setSelectedStatus] = useState<string>('');
 
     useEffect(() => {
-        filterProducts();
+        filterDeliveries();
     }, [search, selectedType, selectedStatus]);
 
-    function filterProducts() {
+    function filterDeliveries() {
         if (!search && !selectedType && !selectedStatus) {
-            setProduct(allProducts);
+            setDelivery(allDeliveries);
             return;
         }
 
-        const filteredProducts = allProducts.filter(product => {
+        const filteredDeliveries = allDeliveries.filter(delivery => {
             const matchesSearch =
-            product.name.toLowerCase().includes(search.toLowerCase());
+            delivery.name.toLowerCase().includes(search.toLowerCase());
             return matchesSearch;
         });
 
-        setProduct(filteredProducts);
+        setDelivery(filteredDeliveries);
     }
 
     return (
         <div className={styles.container}>
             <Tab
-                searchPlaceholder="Pesquise pelo nome do produto"
+                searchPlaceholder="Pesquise pelo nome da entrega"
                 searchValue={search}
                 searchState={setSearch}
                 searchIcon={SearchIcon.src}
                 searchType='text'
                 searchWidth="35%"
-                firstSelectOptionPlaceholder="Tipo de produto"
+                firstSelectOptionPlaceholder="Tipo de entrega"
                 firstSelectOptionActive={activeType}
                 firstSelectOptionOptions={typeOptions}
                 firstSelectOptionSetActive={setActiveType}
@@ -59,13 +59,13 @@ export default function TabUsers() {
                 secondSelectOptionSetActive={setActiveStatus}
                 secondSelectOptionValue={selectedStatus}
                 secondSelectOptionSetValue={setSelectedStatus}
-                buttonText='ADICIONAR PRODUTO'
-                buttonAction={setActiveModalProducts}
+                buttonText='ADICIONAR ENTREGA'
+                buttonAction={setActiveModalDelivery}
                 showFirstSelect={false}
                 showSecondSelect={false}
             />
             {
-                activeModalProducts && (
+                activeModalDelivery && (
                     <section className={styles.container__modal}>
                         <Modal
                             title='Produto'

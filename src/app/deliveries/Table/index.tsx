@@ -23,16 +23,17 @@ export default function TableUsers() {
     const tableHeader = [
         { title: "Nome", width: "15%", border: true },
         { title: "Remetente", width: "15%", border: true },
-        { title: "Envio - Previsto", width: "15%", border: true },
-        { title: "Status", width: "15%", border: true },
-        { title: "Valor Transportado", width: "20%", border: true },
-        { title: "Distância", width: "15%", border: true },
-        { title: "", width: "5%", border: true },
+        { title: "Envio - Previsto", width: "25%", border: true },
+        { title: "Status", width: "10%", border: true },
+        { title: "Valor Transportado", width: "15%", border: true },
+        { title: "Distância", width: "10%", border: true },
+        { title: "PDF", width: "5%", border: true },
         { title: "", width: "5%", border: false },
     ];
 
     async function getDeliveries() {
         if (companyId) {
+            console.log(companyId)
             await http.get(`v1/delivery/company/${companyId}`).then((res) => {
                 console.log(res.data)
                 setAllDeliveries(res.data);
@@ -97,17 +98,17 @@ export default function TableUsers() {
                                 <div className={styles.container__table_line_name}>
                                     <span>{element.sender}</span>
                                 </div>
-                                <div className={styles.container__table_line_name}>
-                                    <span>{element.send_date+ ' - ' + element.expectedDate}</span>
+                                <div className={styles.container__table_line_sendDate}>
+                                    <span>{element.send_date.substring(0, 10).replaceAll('-', '/') + ' até ' + element.expected_date.substring(0, 10).replaceAll('-', '/')}</span>
                                 </div>
-                                <div className={styles.container__table_line_name}>
+                                <div className={styles.container__table_line_distance}>
                                     <span>{element.status}</span>
                                 </div>
                                 <div className={styles.container__table_line_name}>
-                                    <span>{element.value}</span>
+                                    <span>{'R$ ' + element.total}</span>
                                 </div>
-                                <div className={styles.container__table_line_name}>
-                                    <span>{element.distance}</span>
+                                <div className={styles.container__table_line_distance}>
+                                    <span>{element.distance + ' Km'}</span>
                                 </div>
                                 <div className={styles.container__table_line_view} onClick={() => {
                                     setIdSelected(parseInt(element.id))
