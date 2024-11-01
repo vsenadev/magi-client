@@ -3,13 +3,14 @@ export interface IDelivery {
   route_id: string,
   name: string,
   sender: string,
+  companyId?: string,
   recipient: string,
   send_date: string,
   expected_date: string,
   status: string,
   lock_status: string,
   cepStarting: string;
-  cepDestination?: string;
+  cepDestination: string;
   sender_company: string,
   recipient_company: string,
   total: number | null,

@@ -68,7 +68,7 @@ export default function TabUsers() {
                 activeModalDelivery && (
                     <section className={styles.container__modal}>
                         <Modal
-                            title='Produto'
+                            title='Entrega'
                         />
                     </section>
                 )

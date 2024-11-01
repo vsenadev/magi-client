@@ -22,7 +22,7 @@ import axios from "axios";
 import { Alert, AlertTitle } from "@mui/material";
 
 export default function Modal(props: IModal) {
-    const { idSelected, setIdSelected, setActiveModalDelivery } = useGlobalState();
+    const { idSelected, setIdSelected, setActiveModalDelivery, companyId } = useGlobalState();
     const [activeType, setActiveType] = useState<boolean>(false);
     const [typeOptions, setTypeOptions] = useState<IOption[]>([]);
     const [modalError, setModalError] = useState<boolean>(false);
@@ -31,6 +31,7 @@ export default function Modal(props: IModal) {
     const [data, setData] = useState<IDelivery>({
         id: "",
         cepStarting: "",
+        cepDestination: "",
         route_id: "",
         name: "",
         sender: "",
@@ -49,6 +50,7 @@ export default function Modal(props: IModal) {
         setData({
             id: "",
             cepStarting: "",
+            cepDestination: "",
             route_id: "",
             name: "",
             sender: "",
@@ -73,15 +75,16 @@ export default function Modal(props: IModal) {
     async function getWithId() {
         if (idSelected !== null) {
             await http.get(`v1/delivery/${idSelected}`).then((res) => {
+                res.data.send_date = res.data.send_date.substring(0, 10)
+                res.data.expected_date = res.data.expected_date.substring(0, 10)
                 setData(res.data);
             });
         }
     }
 
     async function getAllTypeAccount() {
-        if (idSelected !== null) {
-            console.log(idSelected)
-            await http.get(`v1/product/company/${idSelected}`).then((res) => {
+        if (companyId !== null) {
+            await http.get(`v1/product/company/${companyId}`).then((res) => {
                 setTypeOptions(res.data);
             });
         }
@@ -99,7 +102,7 @@ export default function Modal(props: IModal) {
         }));
     };
 
-    async function getCepInformation() {
+    async function getCepInformationStarting() {
         if (data.cepStarting.length === 9) {
             try {
                 const response = await axios.get(`https://brasilapi.com.br/api/cep/v1/${data.cepStarting}`);
@@ -115,10 +118,29 @@ export default function Modal(props: IModal) {
         }
     }
 
+    async function getCepInformationDestination() {
+        if (data.cepDestination.length === 9) {
+            try {
+                const response = await axios.get(`https://brasilapi.com.br/api/cep/v1/${data.cepDestination}`);
+                setData({
+                    ...data,
+                    destinationState: response?.data?.state || '',
+                    destinationCity: response?.data?.city || '',
+                    destinationStreet: response?.data?.street || ''
+                });
+            } catch (error) {
+                console.error("Erro ao buscar informações do CEP:", error);
+            }
+        }
+    }
+
     useEffect(() => {
-        getCepInformation();
-        getCepInformation();
+        getCepInformationStarting();
     }, [data.cepStarting]);
+
+    useEffect(() => {
+        getCepInformationDestination();
+    }, [data.cepDestination]);
 
     async function sendRequest() {
         try {
@@ -239,6 +261,7 @@ export default function Modal(props: IModal) {
                         />
                     </div>
                 </div>
+                <h1>Endereço de saída</h1>
                 <InputText
                     placeholder='CEP'
                     value={data.cepStarting}
@@ -257,7 +280,7 @@ export default function Modal(props: IModal) {
                     type="text"
                     white={false}
                     width="100%"
-                    disabled={true} // Usar readOnly ao invés de disabled
+                    disabled={true} 
                 />
                 <InputText
                     placeholder='Cidade'
@@ -267,7 +290,7 @@ export default function Modal(props: IModal) {
                     type="text"
                     white={false}
                     width="100%"
-                    disabled={true} // Usar readOnly ao invés de disabled
+                    disabled={true} 
                 />
                 <InputText
                     placeholder='Estado'
@@ -277,7 +300,7 @@ export default function Modal(props: IModal) {
                     type="text"
                     white={false}
                     width="100%"
-                    disabled={true} // Usar readOnly ao invés de disabled
+                    disabled={true} 
                 />
                 <InputText
                     placeholder='Número'
@@ -288,6 +311,7 @@ export default function Modal(props: IModal) {
                     white={false}
                     width="50%"
                 />
+                <h1>Endereço de chegada</h1>
                 <InputText
                     placeholder='CEP'
                     value={data.cepDestination}
@@ -306,7 +330,7 @@ export default function Modal(props: IModal) {
                     type="text"
                     white={false}
                     width="100%"
-                    disabled={true} // Usar readOnly ao invés de disabled
+                    disabled={true} 
                 />
                 <InputText
                     placeholder='Cidade'
@@ -316,7 +340,7 @@ export default function Modal(props: IModal) {
                     type="text"
                     white={false}
                     width="100%"
-                    disabled={true} // Usar readOnly ao invés de disabled
+                    disabled={true} 
                 />
                 <InputText
                     placeholder='Estado'
@@ -326,12 +350,12 @@ export default function Modal(props: IModal) {
                     type="text"
                     white={false}
                     width="100%"
-                    disabled={true} // Usar readOnly ao invés de disabled
+                    disabled={true} 
                 />
                 <InputText
                     placeholder='Número'
                     value={data.destinationNumber}
-                    state={(value) => handleInputChange('startingNumber', value)}
+                    state={(value) => handleInputChange('destinationNumber', value)}
                     icon={NumberIcon.src}
                     type="number"
                     white={false}

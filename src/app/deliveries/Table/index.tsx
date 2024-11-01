@@ -117,7 +117,7 @@ export default function TableUsers() {
                                     <div className={styles.container__table_line_view_button}>
                                         <Image
                                             src={ArrowsIcon}
-                                            alt='visualizar entrega'
+                                            alt='baixar pdf entrega'
                                             width={18}
                                             height={18}
                                             priority={true}
@@ -131,7 +131,7 @@ export default function TableUsers() {
                                     <div className={styles.container__table_line_view_button}>
                                         <Image
                                             src={ArrowsIcon}
-                                            alt='baixar pdf entrega'
+                                            alt='visualizar entrega'
                                             width={18}
                                             height={18}
                                             priority={true}
