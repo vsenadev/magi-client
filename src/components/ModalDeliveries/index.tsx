@@ -34,10 +34,10 @@ export default function Modal(props: IModal) {
         cepDestination: "",
         route_id: "",
         name: "",
-        sender: "",
-        recipient: "",
         send_date: "",
         expected_date: "",
+        sender: "",
+        recipient: "",
         status: "",
         lock_status: "",
         sender_company: "",
@@ -53,10 +53,10 @@ export default function Modal(props: IModal) {
             cepDestination: "",
             route_id: "",
             name: "",
-            sender: "",
-            recipient: "",
             send_date: "",
             expected_date: "",
+            sender: "",
+            recipient: "",
             status: "",
             lock_status: "",
             sender_company: "",
@@ -75,6 +75,7 @@ export default function Modal(props: IModal) {
     async function getWithId() {
         if (idSelected !== null) {
             await http.get(`v1/delivery/${idSelected}`).then((res) => {
+                console.log(res.data)
                 res.data.send_date = res.data.send_date.substring(0, 10)
                 res.data.expected_date = res.data.expected_date.substring(0, 10)
                 setData(res.data);
@@ -108,9 +109,9 @@ export default function Modal(props: IModal) {
                 const response = await axios.get(`https://brasilapi.com.br/api/cep/v1/${data.cepStarting}`);
                 setData({
                     ...data,
-                    startingState: response?.data?.state || '',
-                    startingCity: response?.data?.city || '',
-                    startingStreet: response?.data?.street || ''
+                    starting_state: response?.data?.state || '',
+                    starting_city: response?.data?.city || '',
+                    starting_street: response?.data?.street || ''
                 });
             } catch (error) {
                 console.error("Erro ao buscar informações do CEP:", error);
@@ -124,9 +125,9 @@ export default function Modal(props: IModal) {
                 const response = await axios.get(`https://brasilapi.com.br/api/cep/v1/${data.cepDestination}`);
                 setData({
                     ...data,
-                    destinationState: response?.data?.state || '',
-                    destinationCity: response?.data?.city || '',
-                    destinationStreet: response?.data?.street || ''
+                    destination_state: response?.data?.state || '',
+                    destination_city: response?.data?.city || '',
+                    destination_street: response?.data?.street || ''
                 });
             } catch (error) {
                 console.error("Erro ao buscar informações do CEP:", error);
@@ -143,6 +144,9 @@ export default function Modal(props: IModal) {
     }, [data.cepDestination]);
 
     async function sendRequest() {
+        console.log(data)
+        data.starting_number = Number(data.starting_number)
+        data.destination_number = Number(data.destination_number)
         try {
             if (idSelected) {
                 const res: any = await http.put(`v1/delivery/${idSelected}`, data);
@@ -201,7 +205,7 @@ export default function Modal(props: IModal) {
                         width="100%"
                     />
                     <InputText
-                        placeholder='Remetente'
+                        placeholder='Remetente (email)'
                         value={data.sender}
                         state={(value) => handleInputChange('sender', value)}
                         icon={MailIcon.src}
@@ -210,7 +214,7 @@ export default function Modal(props: IModal) {
                         width="100%"
                     />
                     <InputText
-                        placeholder='Destinatário'
+                        placeholder='Destinatário (email)'
                         value={data.recipient}
                         state={(value) => handleInputChange('recipient', value)}
                         icon={CnpjIcon.src}
@@ -223,20 +227,18 @@ export default function Modal(props: IModal) {
                         value={data.send_date}
                         state={(value) => handleInputChange('send_date', value)}
                         icon={CompanyIcon.src}
-                        type="text"
+                        type="date"
                         white={false}
                         width="100%"
-                        mask='9999/99/99'
                     />
                     <InputText
                         placeholder='Data de recebimento'
                         value={data.expected_date}
                         state={(value) => handleInputChange('expected_date', value)}
                         icon={CompanyIcon.src}
-                        type="text"
+                        type="date"
                         white={false}
                         width="100%"
-                        mask='9999/99/99'
                     />
                     <SelectOption
                         placeholder='Produtos'
@@ -274,38 +276,38 @@ export default function Modal(props: IModal) {
                 />
                 <InputText
                     placeholder='Rua'
-                    value={data.startingStreet}
-                    state={(value) => handleInputChange('startingStreet', value)}
+                    value={data.starting_street}
+                    state={(value) => handleInputChange('starting_street', value)}
                     icon={AddressIcon.src}
                     type="text"
                     white={false}
                     width="100%"
-                    disabled={true} 
+                    disabled={true}
                 />
                 <InputText
                     placeholder='Cidade'
-                    value={data.startingCity}
-                    state={(value) => handleInputChange('startingCity', value)}
+                    value={data.starting_city}
+                    state={(value) => handleInputChange('starting_city', value)}
                     icon={AddressIcon.src}
                     type="text"
                     white={false}
                     width="100%"
-                    disabled={true} 
+                    disabled={true}
                 />
                 <InputText
                     placeholder='Estado'
-                    value={data.startingState}
-                    state={(value) => handleInputChange('startingState', value)}
+                    value={data.starting_state}
+                    state={(value) => handleInputChange('starting_state', value)}
                     icon={AddressIcon.src}
                     type="text"
                     white={false}
                     width="100%"
-                    disabled={true} 
+                    disabled={true}
                 />
                 <InputText
                     placeholder='Número'
-                    value={data.startingNumber}
-                    state={(value) => handleInputChange('startingNumber', value)}
+                    value={data.starting_number}
+                    state={(value) => handleInputChange('starting_number', value)}
                     icon={NumberIcon.src}
                     type="number"
                     white={false}
@@ -324,38 +326,38 @@ export default function Modal(props: IModal) {
                 />
                 <InputText
                     placeholder='Rua'
-                    value={data.destinationStreet}
-                    state={(value) => handleInputChange('startingStreet', value)}
+                    value={data.destination_street}
+                    state={(value) => handleInputChange('destination_street', value)}
                     icon={AddressIcon.src}
                     type="text"
                     white={false}
                     width="100%"
-                    disabled={true} 
+                    disabled={true}
                 />
                 <InputText
                     placeholder='Cidade'
-                    value={data.destinationCity}
-                    state={(value) => handleInputChange('startingCity', value)}
+                    value={data.destination_city}
+                    state={(value) => handleInputChange('destination_city', value)}
                     icon={AddressIcon.src}
                     type="text"
                     white={false}
                     width="100%"
-                    disabled={true} 
+                    disabled={true}
                 />
                 <InputText
                     placeholder='Estado'
-                    value={data.destinationState}
-                    state={(value) => handleInputChange('startingState', value)}
+                    value={data.destination_state}
+                    state={(value) => handleInputChange('destination_state', value)}
                     icon={AddressIcon.src}
                     type="text"
                     white={false}
                     width="100%"
-                    disabled={true} 
+                    disabled={true}
                 />
                 <InputText
                     placeholder='Número'
-                    value={data.destinationNumber}
-                    state={(value) => handleInputChange('destinationNumber', value)}
+                    value={data.destination_number}
+                    state={(value) => handleInputChange('destination_number', value)}
                     icon={NumberIcon.src}
                     type="number"
                     white={false}

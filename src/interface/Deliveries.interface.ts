@@ -15,22 +15,21 @@ export interface IDelivery {
   recipient_company: string,
   total: number | null,
   distance: number | null
-  expectedDate?: Date;
   routeId?: string;
-  startingAddress?: number;
-  destinationAddress?: number;
+  starting_address?: number;
+  destination_address?: number;
   startingCep?: string;
   startingNeighborhood?: string;
-  startingCity?: string;
-  startingNumber?: number;
-  startingState?: string;
-  startingStreet?: string;
+  starting_city?: string;
+  starting_number?: number;
+  starting_state?: string;
+  starting_street?: string;
   destinationCep?: string;
   destinationNeighborhood?: string;
-  destinationCity?: string;
-  destinationNumber?: number;
-  destinationState?: string;
-  destinationStreet?: string;
+  destination_city?: string;
+  destination_number?: number;
+  destination_state?: string;
+  destination_street?: string;
   expectedRoute?: string;
   tracedRoute?: string;
   products?: string;
