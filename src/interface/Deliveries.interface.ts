@@ -5,12 +5,12 @@ export interface IDelivery {
   sender: string,
   companyId?: string,
   recipient: string,
-  send_date: string,
-  expected_date: string,
+  send_date: Date,
+  expected_date?: Date,
   status: string,
   lock_status: string,
-  cepStarting: string;
-  cepDestination: string;
+  starting_cep: string;
+  destination_cep: string;
   sender_company: string,
   recipient_company: string,
   total: number | null,
@@ -23,6 +23,8 @@ export interface IDelivery {
   starting_city?: string;
   starting_number?: number;
   starting_state?: string;
+  starting_neighborhood?: string;
+  destination_neighborhood?: string;
   starting_street?: string;
   destinationCep?: string;
   destinationNeighborhood?: string;

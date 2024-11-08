@@ -2,7 +2,7 @@ import React from "react";
 
 export interface IInputText {
     placeholder: string;
-    value: string | number | undefined | null;
+    value: string | number | undefined | null | Date;
     state: React.Dispatch<React.SetStateAction<string>>;
     icon: string;
     type: string;

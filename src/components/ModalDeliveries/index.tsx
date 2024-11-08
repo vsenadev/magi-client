@@ -30,12 +30,11 @@ export default function Modal(props: IModal) {
     const [modalMessage, setModalMessage] = useState<string>('');
     const [data, setData] = useState<IDelivery>({
         id: "",
-        cepStarting: "",
-        cepDestination: "",
+        starting_cep: "",
+        destination_cep: "",
         route_id: "",
         name: "",
-        send_date: "",
-        expected_date: "",
+        send_date: new Date(),
         sender: "",
         recipient: "",
         status: "",
@@ -43,18 +42,17 @@ export default function Modal(props: IModal) {
         sender_company: "",
         recipient_company: "",
         total: null,
-        distance: null
+        distance: 1
     });
 
     function cleanValues() {
         setData({
             id: "",
-            cepStarting: "",
-            cepDestination: "",
+            starting_cep: "",
+            destination_cep: "",
             route_id: "",
             name: "",
-            send_date: "",
-            expected_date: "",
+            send_date: new Date(),
             sender: "",
             recipient: "",
             status: "",
@@ -62,7 +60,7 @@ export default function Modal(props: IModal) {
             sender_company: "",
             recipient_company: "",
             total: null,
-            distance: null
+            distance: 1
         });
     }
 
@@ -104,12 +102,13 @@ export default function Modal(props: IModal) {
     };
 
     async function getCepInformationStarting() {
-        if (data.cepStarting.length === 9) {
+        if (data.starting_cep.length === 9) {
             try {
-                const response = await axios.get(`https://brasilapi.com.br/api/cep/v1/${data.cepStarting}`);
+                const response = await axios.get(`https://brasilapi.com.br/api/cep/v1/${data.starting_cep}`);
                 setData({
                     ...data,
                     starting_state: response?.data?.state || '',
+                    starting_neighborhood: response?.data?.neighborhood || '',
                     starting_city: response?.data?.city || '',
                     starting_street: response?.data?.street || ''
                 });
@@ -120,12 +119,13 @@ export default function Modal(props: IModal) {
     }
 
     async function getCepInformationDestination() {
-        if (data.cepDestination.length === 9) {
+        if (data.destination_cep.length === 9) {
             try {
-                const response = await axios.get(`https://brasilapi.com.br/api/cep/v1/${data.cepDestination}`);
+                const response = await axios.get(`https://brasilapi.com.br/api/cep/v1/${data.destination_cep}`);
                 setData({
                     ...data,
                     destination_state: response?.data?.state || '',
+                    destination_neighborhood: response?.data?.neighborhood || '',
                     destination_city: response?.data?.city || '',
                     destination_street: response?.data?.street || ''
                 });
@@ -137,11 +137,11 @@ export default function Modal(props: IModal) {
 
     useEffect(() => {
         getCepInformationStarting();
-    }, [data.cepStarting]);
+    }, [data.starting_cep]);
 
     useEffect(() => {
         getCepInformationDestination();
-    }, [data.cepDestination]);
+    }, [data.destination_cep]);
 
     async function sendRequest() {
         console.log(data)
@@ -231,15 +231,6 @@ export default function Modal(props: IModal) {
                         white={false}
                         width="100%"
                     />
-                    <InputText
-                        placeholder='Data de recebimento'
-                        value={data.expected_date}
-                        state={(value) => handleInputChange('expected_date', value)}
-                        icon={CompanyIcon.src}
-                        type="date"
-                        white={false}
-                        width="100%"
-                    />
                     <SelectOption
                         placeholder='Produtos'
                         active={activeType}
@@ -266,8 +257,8 @@ export default function Modal(props: IModal) {
                 <h1>Endereço de saída</h1>
                 <InputText
                     placeholder='CEP'
-                    value={data.cepStarting}
-                    state={(value) => handleInputChange('cepStarting', value)}
+                    value={data.starting_cep}
+                    state={(value) => handleInputChange('starting_cep', value)}
                     icon={AddressIcon.src}
                     type="text"
                     white={false}
@@ -316,8 +307,8 @@ export default function Modal(props: IModal) {
                 <h1>Endereço de chegada</h1>
                 <InputText
                     placeholder='CEP'
-                    value={data.cepDestination}
-                    state={(value) => handleInputChange('cepDestination', value)}
+                    value={data.destination_cep}
+                    state={(value) => handleInputChange('destination_cep', value)}
                     icon={AddressIcon.src}
                     type="text"
                     white={false}
