@@ -9,6 +9,7 @@ import Image from "next/image";
 import { http } from "@/environment/environment";
 import { parseCookies } from 'nookies';
 import { IDelivery } from '@/interface/Deliveries.interface';
+import DownloadIcon from "@/../public/img/download-icon.svg";
 
 export default function TableUsers() {
     const context = useContext(GlobalStateContext);
@@ -16,7 +17,7 @@ export default function TableUsers() {
         throw new Error("TableUsers must be used within a GlobalStateProvider");
     }
 
-    const { delivery, setDelivery, allDeliveries, setAllDeliveries, setIdSelected, setActiveModalDelivery, activeModalDelivery, idSelected, companyId, setCompanyId } = context;
+    const { delivery, setDelivery, allDeliveries, setAllDeliveries, setIdSelected, setActiveModalDelivery, activeModalDelivery, idSelected, companyId, setCompanyId, setShowMap } = context;
     const [currentPage, setCurrentPage] = useState(1);
     const pageSize = 10;
 
@@ -84,6 +85,46 @@ export default function TableUsers() {
         setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
     };
 
+    const downloadPdf = async (id : string) => {
+        try {
+            const base64 : string = await http.get(`v1/delivery/pdf/${id}`)
+                .then((res) => res.data?.pdf); // Supondo que o base64 está em `res.data`
+            
+            // Converter a string base64 para Blob
+            const pdfBlob = base64ToBlob(base64, 'application/pdf');
+            
+            // Criar uma URL temporária para o Blob
+            const pdfUrl = URL.createObjectURL(pdfBlob);
+            
+            // Criar um link para download
+            const link = document.createElement('a');
+            link.href = pdfUrl;
+            link.download = 'document.pdf'; // Nome do arquivo ao baixar
+            
+            // Adicionar o link ao DOM, clicar nele e removê-lo
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Liberar a URL
+            URL.revokeObjectURL(pdfUrl);
+        } catch (error) {
+            console.error("Erro ao baixar o PDF:", error);
+        }
+    }
+
+    const base64ToBlob = (base64 : string, contentType : string) => {
+        const byteCharacters = atob(base64);
+        const byteArrays = [];
+        for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+            const slice = byteCharacters.slice(offset, offset + 512);
+            const byteNumbers = Array.from(slice).map((char) => char.charCodeAt(0));
+            const byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
+        }
+        return new Blob(byteArrays, { type: contentType });
+    };
+
     return (
         <div className={styles.container}>
             <HeaderTable header={tableHeader} />
@@ -99,7 +140,7 @@ export default function TableUsers() {
                                     <span>{element.sender}</span>
                                 </div>
                                 <div className={styles.container__table_line_sendDate}>
-                                    <span>{element.send_date.substring(0, 10).replaceAll('-', '/') + ' até ' + element.expected_date.substring(0, 10).replaceAll('-', '/')}</span>
+                                    <span>{element.send_date.substring(0, 10).replaceAll('-', '/') + ' até ' + element.expected_date?.substring(0, 10).replaceAll('-', '/')}</span>
                                 </div>
                                 <div className={styles.container__table_line_distance}>
                                     <span>{element.status}</span>
@@ -110,13 +151,12 @@ export default function TableUsers() {
                                 <div className={styles.container__table_line_distance}>
                                     <span>{element.distance + ' Km'}</span>
                                 </div>
-                                <div className={styles.container__table_line_view} onClick={() => {
-                                    setIdSelected(parseInt(element.id))
-                                    setActiveModalDelivery(true)
+                                <div className={styles.container__table_line_view} onClick={async () => {
+                                    await downloadPdf(element.route_id)
                                 }}>
                                     <div className={styles.container__table_line_view_button}>
                                         <Image
-                                            src={ArrowsIcon}
+                                            src={DownloadIcon}
                                             alt='baixar pdf entrega'
                                             width={18}
                                             height={18}
@@ -126,6 +166,7 @@ export default function TableUsers() {
                                 </div>
                                 <div className={styles.container__table_line_view} onClick={() => {
                                     setIdSelected(parseInt(element.id))
+                                    setShowMap(true)
                                     setActiveModalDelivery(true)
                                 }}>
                                     <div className={styles.container__table_line_view_button}>

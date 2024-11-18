@@ -1,3 +1,5 @@
+import { IProduct } from "./Products.interface";
+
 export interface IDelivery {
   id: string,
   route_id: string,
@@ -34,6 +36,6 @@ export interface IDelivery {
   destination_street?: string;
   expectedRoute?: string;
   tracedRoute?: string;
-  products?: string;
+  products?: IProduct[];
   pdf?: any;
 }

@@ -1,10 +1,11 @@
 export interface IProduct {
-    id: string;
+    id?: string;
     name: string;
-    type: string;
+    type?: string;
     value: number | null;
     lenght: number | null;
     width: number | null;
     height: number | null;
-    company_id: number;
+    company_id?: number;
+    quantity?: number | null;
 }

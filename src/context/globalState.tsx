@@ -40,6 +40,8 @@ interface GlobalStateContextProps {
   setActiveModalProducts: React.Dispatch<React.SetStateAction<boolean>>;
   companyId: number | null;
   setCompanyId: React.Dispatch<React.SetStateAction<number | null>>;
+  showMap: boolean;
+  setShowMap: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const GlobalStateContext = createContext<GlobalStateContextProps | undefined>(undefined);
@@ -66,6 +68,7 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({ childr
   const [activeModalEmployees, setActiveModalEmployees] = useState<boolean>(false);
   const [activeModalProducts, setActiveModalProducts] = useState<boolean>(false);
   const [companyId, setCompanyId] = useState<number | null>(null);
+  const [showMap, setShowMap] = useState<boolean>(false);
 
 
   return (
@@ -85,7 +88,8 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({ childr
       activeModalDelivery, setActiveModalDelivery,
       activeModalEmployees, setActiveModalEmployees,
       activeModalProducts, setActiveModalProducts,
-      companyId, setCompanyId
+      companyId, setCompanyId,
+      showMap, setShowMap
     }}>
       {children}
     </GlobalStateContext.Provider>

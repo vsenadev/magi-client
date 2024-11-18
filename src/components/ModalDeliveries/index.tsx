@@ -20,14 +20,26 @@ import SelectOption from "@/components/SelectOption";
 import { IOption } from "@/interface/SelectOption.interface";
 import axios from "axios";
 import { Alert, AlertTitle } from "@mui/material";
+import { IProduct } from '@/interface/Products.interface';
+import { GoogleMap, LoadScript, DirectionsRenderer } from "@react-google-maps/api";
+
 
 export default function Modal(props: IModal) {
-    const { idSelected, setIdSelected, setActiveModalDelivery, companyId } = useGlobalState();
+    const { idSelected, setIdSelected, setActiveModalDelivery, companyId, showMap, setShowMap } = useGlobalState();
     const [activeType, setActiveType] = useState<boolean>(false);
     const [typeOptions, setTypeOptions] = useState<IOption[]>([]);
     const [modalError, setModalError] = useState<boolean>(false);
     const [modalSuccess, setModalSuccess] = useState<boolean>(false);
     const [modalMessage, setModalMessage] = useState<string>('');
+    const [oneDelivery, setOneDelivery] = useState<Object>({});
+    const [products, setProducts] = useState<IProduct[]>([{
+        name: '',
+        quantity: 0,
+        value: 0,
+        lenght: 0,
+        width: 0,
+        height: 0
+    }]);
     const [data, setData] = useState<IDelivery>({
         id: "",
         starting_cep: "",
@@ -42,8 +54,67 @@ export default function Modal(props: IModal) {
         sender_company: "",
         recipient_company: "",
         total: null,
-        distance: 1
+        distance: 1,
     });
+
+    const containerStyle = {
+        width: "100%",
+        height: "400px",
+    };
+    
+    interface Props {
+        startingPoint: {
+            cep: string;
+            street: string;
+            city: string;
+            state: string;
+            number: string;
+        };
+        destinationPoint: {
+            cep: string;
+            street: string;
+            city: string;
+            state: string;
+            number: string;
+        };
+    }
+    
+    const MapComponent: React.FC<Props> = ({ startingPoint, destinationPoint }) => {
+        const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
+    
+        useEffect(() => {
+            const directionsService = new google.maps.DirectionsService();
+            const startAddress = `${startingPoint.number} ${startingPoint.street}, ${startingPoint.city}, ${startingPoint.state}`;
+            const endAddress = `${destinationPoint.number} ${destinationPoint.street}, ${destinationPoint.city}, ${destinationPoint.state}`;
+    
+            directionsService.route(
+                {
+                    origin: startAddress,
+                    destination: endAddress,
+                    travelMode: google.maps.TravelMode.DRIVING,
+                },
+                (result, status) => {
+                    if (status === google.maps.DirectionsStatus.OK) {
+                        setDirections(result);
+                    } else {
+                        console.error(`Error fetching directions: ${status}`);
+                    }
+                }
+            );
+        }, [startingPoint, destinationPoint]);
+    
+        return (
+            <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
+            <GoogleMap
+                mapContainerStyle={{ width: "100%", height: "400px" }}
+                center={{ lat: 0, lng: 0 }} // Centralizar o mapa apropriadamente
+                zoom={10}
+            >
+                {directions && <DirectionsRenderer directions={directions} />}
+            </GoogleMap>
+        </LoadScript>
+        );
+    };
 
     function cleanValues() {
         setData({
@@ -60,7 +131,8 @@ export default function Modal(props: IModal) {
             sender_company: "",
             recipient_company: "",
             total: null,
-            distance: 1
+            distance: 1,
+            products: []
         });
     }
 
@@ -70,13 +142,12 @@ export default function Modal(props: IModal) {
         setActiveModalDelivery(false);
     };
 
+
     async function getWithId() {
         if (idSelected !== null) {
             await http.get(`v1/delivery/${idSelected}`).then((res) => {
                 console.log(res.data)
-                res.data.send_date = res.data.send_date.substring(0, 10)
-                res.data.expected_date = res.data.expected_date.substring(0, 10)
-                setData(res.data);
+                setOneDelivery(res.data);
             });
         }
     }
@@ -99,6 +170,28 @@ export default function Modal(props: IModal) {
             ...prevData,
             [field]: value
         }));
+    };
+
+    const handleProductChange = (field: keyof IProduct, value: string | number, index: number) => {
+        if(field == 'name'){
+            typeOptions.forEach((element: any) => {
+                if(element.name == value){
+                    setProducts(prevProducts => {
+                        const updatedProducts = [...prevProducts];
+                        updatedProducts[index] = { ...updatedProducts[index], 'value': parseFloat(element.value) };
+                        updatedProducts[index] = { ...updatedProducts[index], 'width': parseFloat(element.width) };
+                        updatedProducts[index] = { ...updatedProducts[index], 'height': parseFloat(element.height) };
+                        updatedProducts[index] = { ...updatedProducts[index], 'lenght': parseFloat(element.lenght) };
+                        return updatedProducts;
+                    });
+                }
+            })
+        }
+        setProducts(prevProducts => {
+            const updatedProducts = [...prevProducts];
+            updatedProducts[index] = { ...updatedProducts[index], [field]: value };
+            return updatedProducts;
+        });
     };
 
     async function getCepInformationStarting() {
@@ -176,6 +269,7 @@ export default function Modal(props: IModal) {
 
     return (
         <div className={styles.container}>
+            {/* Mensagem de erro */}
             {modalError && (
                 <div className={styles.container__modal}>
                     <Alert severity="error">
@@ -184,6 +278,8 @@ export default function Modal(props: IModal) {
                     </Alert>
                 </div>
             )}
+    
+            {/* Mensagem de sucesso */}
             {modalSuccess && (
                 <div className={styles.container__modal}>
                     <Alert severity="success">
@@ -192,173 +288,259 @@ export default function Modal(props: IModal) {
                     </Alert>
                 </div>
             )}
-            <div className={styles.container__boxleft}>
-                <h1 className={styles.container__boxleft_title}>{idSelected !== null ? 'Visualizar' : 'Adicionar'} {props.title}</h1>
-                <div className={styles.container__boxleft_input}>
-                    <InputText
-                        placeholder='Nome'
-                        value={data.name}
-                        state={(value) => handleInputChange('name', value)}
-                        icon={LetterIcon.src}
-                        type="text"
-                        white={false}
-                        width="100%"
-                    />
-                    <InputText
-                        placeholder='Remetente (email)'
-                        value={data.sender}
-                        state={(value) => handleInputChange('sender', value)}
-                        icon={MailIcon.src}
-                        type="text"
-                        white={false}
-                        width="100%"
-                    />
-                    <InputText
-                        placeholder='Destinatário (email)'
-                        value={data.recipient}
-                        state={(value) => handleInputChange('recipient', value)}
-                        icon={CnpjIcon.src}
-                        type="text"
-                        white={false}
-                        width="100%"
-                    />
-                    <InputText
-                        placeholder='Data de envio'
-                        value={data.send_date}
-                        state={(value) => handleInputChange('send_date', value)}
-                        icon={CompanyIcon.src}
-                        type="date"
-                        white={false}
-                        width="100%"
-                    />
-                    <SelectOption
-                        placeholder='Produtos'
-                        active={activeType}
-                        options={typeOptions}
-                        setActive={setActiveType}
-                        width="98.5%"
-                        value={data.products}
-                        setValue={(value) => handleInputChange('products', value)}
-                        backgroundBlue={true}
-                    />
-                </div>
-            </div>
-            <div className={styles.container__boxright}>
-                <div className={styles.container__boxright_close}>
-                    <div className={styles.container__boxright_close_content} onClick={() => handleClose()}>
-                        <Image
-                            src={CloseIcon}
-                            alt='Fechar'
-                            width={12}
-                            height={12}
-                        />
-                    </div>
-                </div>
-                <h1>Endereço de saída</h1>
-                <InputText
-                    placeholder='CEP'
-                    value={data.starting_cep}
-                    state={(value) => handleInputChange('starting_cep', value)}
-                    icon={AddressIcon.src}
-                    type="text"
-                    white={false}
-                    width="100%"
-                    mask='99999-999'
-                />
-                <InputText
-                    placeholder='Rua'
-                    value={data.starting_street}
-                    state={(value) => handleInputChange('starting_street', value)}
-                    icon={AddressIcon.src}
-                    type="text"
-                    white={false}
-                    width="100%"
-                    disabled={true}
-                />
-                <InputText
-                    placeholder='Cidade'
-                    value={data.starting_city}
-                    state={(value) => handleInputChange('starting_city', value)}
-                    icon={AddressIcon.src}
-                    type="text"
-                    white={false}
-                    width="100%"
-                    disabled={true}
-                />
-                <InputText
-                    placeholder='Estado'
-                    value={data.starting_state}
-                    state={(value) => handleInputChange('starting_state', value)}
-                    icon={AddressIcon.src}
-                    type="text"
-                    white={false}
-                    width="100%"
-                    disabled={true}
-                />
-                <InputText
-                    placeholder='Número'
-                    value={data.starting_number}
-                    state={(value) => handleInputChange('starting_number', value)}
-                    icon={NumberIcon.src}
-                    type="number"
-                    white={false}
-                    width="50%"
-                />
-                <h1>Endereço de chegada</h1>
-                <InputText
-                    placeholder='CEP'
-                    value={data.destination_cep}
-                    state={(value) => handleInputChange('destination_cep', value)}
-                    icon={AddressIcon.src}
-                    type="text"
-                    white={false}
-                    width="100%"
-                    mask='99999-999'
-                />
-                <InputText
-                    placeholder='Rua'
-                    value={data.destination_street}
-                    state={(value) => handleInputChange('destination_street', value)}
-                    icon={AddressIcon.src}
-                    type="text"
-                    white={false}
-                    width="100%"
-                    disabled={true}
-                />
-                <InputText
-                    placeholder='Cidade'
-                    value={data.destination_city}
-                    state={(value) => handleInputChange('destination_city', value)}
-                    icon={AddressIcon.src}
-                    type="text"
-                    white={false}
-                    width="100%"
-                    disabled={true}
-                />
-                <InputText
-                    placeholder='Estado'
-                    value={data.destination_state}
-                    state={(value) => handleInputChange('destination_state', value)}
-                    icon={AddressIcon.src}
-                    type="text"
-                    white={false}
-                    width="100%"
-                    disabled={true}
-                />
-                <InputText
-                    placeholder='Número'
-                    value={data.destination_number}
-                    state={(value) => handleInputChange('destination_number', value)}
-                    icon={NumberIcon.src}
-                    type="number"
-                    white={false}
-                    width="50%"
-                />
-                <div className={styles.container__boxright_buttons}>
-                    <button onClick={() => handleClose()} className={styles.container__boxright_buttons_close}>FECHAR</button>
-                    <button onClick={() => sendRequest()} className={styles.container__boxright_buttons_add}>SALVAR</button>
-                </div>
-            </div>
+    
+            {/* Condicional para exibir mapa ou formulário */}
+            {showMap ? (<div className={styles.mapModal}>
+        <div className={styles.mapModal__content}>
+            {/* Botão para fechar o modal */}
+            <button
+                className={styles.mapModal__closeButton}
+                onClick={() => setShowMap(false)} // Fecha o modal ao clicar
+            >
+                Fechar
+            </button>
+
+            {/* Aqui você renderiza o mapa com a rota */}
+            <MapComponent
+                startingPoint={{
+                    cep: "03042-000",
+                    street: "Rua Piratininga",
+                    city: "São Paulo",
+                    state: "São Paulo",
+                    number: "270",
+                }}
+                destinationPoint={{
+                    cep: "01518-010",
+                    street: "Rua Professor Demóstenes Batista Figueira Marques",
+                    city: "São Paulo",
+                    state: "São Paulo",
+                    number: "13",
+                }}
+            />
         </div>
-    );
+    </div>) : (
+                <>
+                    {/* Box esquerdo */}
+                    <div className={styles.container__boxleft}>
+                        <h1 className={styles.container__boxleft_title}>
+                            {idSelected !== null ? 'Visualizar' : 'Adicionar'} {props.title}
+                        </h1>
+    
+                        <div className={styles.container__boxleft_input}>
+                            {/* Campos de entrada */}
+                            <InputText
+                                placeholder="Nome"
+                                value={data.name}
+                                state={(value) => handleInputChange('name', value)}
+                                icon={LetterIcon.src}
+                                type="text"
+                                white={false}
+                                width="100%"
+                            />
+                            <InputText
+                                placeholder="Remetente (email)"
+                                value={data.sender}
+                                state={(value) => handleInputChange('sender', value)}
+                                icon={MailIcon.src}
+                                type="text"
+                                white={false}
+                                width="100%"
+                            />
+                            <InputText
+                                placeholder="Destinatário (email)"
+                                value={data.recipient}
+                                state={(value) => handleInputChange('recipient', value)}
+                                icon={CnpjIcon.src}
+                                type="text"
+                                white={false}
+                                width="100%"
+                            />
+                            <InputText
+                                placeholder="Data de envio"
+                                value={data.send_date}
+                                state={(value) => handleInputChange('send_date', value)}
+                                icon={CompanyIcon.src}
+                                type="date"
+                                white={false}
+                                width="100%"
+                            />
+    
+                            {/* Produtos */}
+                            <div>
+                                {products.map((product: IProduct, index: number) => (
+                                    <div key={product.id}>
+                                        <SelectOption
+                                            placeholder="Produtos"
+                                            active={activeType}
+                                            options={typeOptions}
+                                            setActive={setActiveType}
+                                            width="98.5%"
+                                            value={product.name}
+                                            setValue={(value) => handleProductChange('name', value, index)}
+                                            backgroundBlue
+                                        />
+                                        <InputText
+                                            placeholder="Quantidade"
+                                            value={(products[index].quantity)}
+                                            state={(value) => handleProductChange('quantity', parseInt(value), index)}
+                                            icon={CnpjIcon.src}
+                                            type="number"
+                                            white={false}
+                                            width="100%"
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                            <button
+                                onClick={() =>
+                                    setProducts((prevProducts) => [
+                                        ...prevProducts,
+                                        { name: '', quantity: 0, value: 0, lenght: 0, width: 0, height: 0 },
+                                    ])
+                                }
+                            >
+                                Adicionar Produto
+                            </button>
+                        </div>
+                    </div>
+    
+                    {/* Box direito */}
+                    <div className={styles.container__boxright}>
+                        {/* Botão de fechar */}
+                        <div className={styles.container__boxright_close}>
+                            <div
+                                className={styles.container__boxright_close_content}
+                                onClick={handleClose}
+                            >
+                                <Image src={CloseIcon} alt="Fechar" width={12} height={12} />
+                            </div>
+                        </div>
+    
+                        {/* Endereço de saída */}
+                        <h1>Endereço de saída</h1>
+                        <InputText
+                            placeholder="CEP"
+                            value={data.starting_cep}
+                            state={(value) => handleInputChange('starting_cep', value)}
+                            icon={AddressIcon.src}
+                            type="text"
+                            white={false}
+                            width="100%"
+                            mask="99999-999"
+                        />
+                        <InputText
+                            placeholder="Rua"
+                            value={data.starting_street}
+                            state={(value) => handleInputChange('starting_street', value)}
+                            icon={AddressIcon.src}
+                            type="text"
+                            white={false}
+                            width="100%"
+                            disabled
+                        />
+                        <InputText
+                            placeholder="Cidade"
+                            value={data.starting_city}
+                            state={(value) => handleInputChange('starting_city', value)}
+                            icon={AddressIcon.src}
+                            type="text"
+                            white={false}
+                            width="100%"
+                            disabled
+                        />
+                        <InputText
+                            placeholder="Estado"
+                            value={data.starting_state}
+                            state={(value) => handleInputChange('starting_state', value)}
+                            icon={AddressIcon.src}
+                            type="text"
+                            white={false}
+                            width="100%"
+                            disabled
+                        />
+                        <InputText
+                            placeholder="Número"
+                            value={data.starting_number}
+                            state={(value) => handleInputChange('starting_number', value)}
+                            icon={NumberIcon.src}
+                            type="number"
+                            white={false}
+                            width="50%"
+                        />
+    
+                        {/* Endereço de chegada */}
+                        <h1>Endereço de chegada</h1>
+                        <InputText
+                            placeholder="CEP"
+                            value={data.destination_cep}
+                            state={(value) => handleInputChange('destination_cep', value)}
+                            icon={AddressIcon.src}
+                            type="text"
+                            white={false}
+                            width="100%"
+                            mask="99999-999"
+                        />
+                        <InputText
+                            placeholder="Rua"
+                            value={data.destination_street}
+                            state={(value) => handleInputChange('destination_street', value)}
+                            icon={AddressIcon.src}
+                            type="text"
+                            white={false}
+                            width="100%"
+                            disabled
+                        />
+                        <InputText
+                            placeholder="Cidade"
+                            value={data.destination_city}
+                            state={(value) => handleInputChange('destination_city', value)}
+                            icon={AddressIcon.src}
+                            type="text"
+                            white={false}
+                            width="100%"
+                            disabled
+                        />
+                        <InputText
+                            placeholder="Estado"
+                            value={data.destination_state}
+                            state={(value) => handleInputChange('destination_state', value)}
+                            icon={AddressIcon.src}
+                            type="text"
+                            white={false}
+                            width="100%"
+                            disabled
+                        />
+                        <InputText
+                            placeholder="Número"
+                            value={data.destination_number}
+                            state={(value) => handleInputChange('destination_number', value)}
+                            icon={NumberIcon.src}
+                            type="number"
+                            white={false}
+                            width="50%"
+                        />
+    
+                        {/* Botões */}
+                        <div className={styles.container__boxright_buttons}>
+                            <button
+                                onClick={handleClose}
+                                className={styles.container__boxright_buttons_close}
+                            >
+                                FECHAR
+                            </button>
+                            <button
+                                onClick={() => {
+                                    data.products = products;
+                                    sendRequest();
+                                }}
+                                className={styles.container__boxright_buttons_add}
+                            >
+                                SALVAR
+                            </button>
+                        </div>
+                    </div>
+                </>
+            )}
+        </div>
+    );    
 }
