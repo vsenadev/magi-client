@@ -45,6 +45,7 @@ export default function InputText(props: IInputText) {
     return (
         <input
             placeholder={props.placeholder}
+            // @ts-ignore
             value={props.value}
             onChange={handleChange}
             style={{

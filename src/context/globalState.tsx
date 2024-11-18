@@ -10,16 +10,18 @@ interface GlobalStateContextProps {
   language: string;
   setLanguage: React.Dispatch<React.SetStateAction<string>>;
   text: any;
+  userInput: string,
   user: IEmployees[],
   setUser: React.Dispatch<React.SetStateAction<IEmployees[]>>;
+  setUserInput: React.Dispatch<React.SetStateAction<string>>;
   allUsers: IEmployees[],
   setAllUsers: React.Dispatch<React.SetStateAction<IEmployees[]>>;
   delivery: IDelivery[],
   setDelivery: React.Dispatch<React.SetStateAction<IDelivery[]>>;
   allDeliveries: IDelivery[],
   setAllDeliveries: React.Dispatch<React.SetStateAction<IDelivery[]>>;
-  product: string,
-  setProduct: React.Dispatch<React.SetStateAction<string>>;
+  product: IProduct[],
+  setProduct: React.Dispatch<React.SetStateAction<IProduct[]>>;
   allProducts: IProduct[],
   setAllProducts: React.Dispatch<React.SetStateAction<IProduct[]>>;
   password: string;
@@ -52,11 +54,12 @@ interface GlobalStateProviderProps {
 
 export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({ children }) => {
   const [language, setLanguage] = useState<string>('pt');
+  const [userInput, setUserInput] = useState<string>('');
   const [user, setUser] = useState<IEmployees[]>([]);
   const [allUsers, setAllUsers] = useState<IEmployees[]>([]);
   const [delivery, setDelivery] = useState<IDelivery[]>([]);
   const [allDeliveries, setAllDeliveries] = useState<IDelivery[]>([]);
-  const [product, setProduct] = useState<string>('');
+  const [product, setProduct] = useState<IProduct[]>([]);
   const [allProducts, setAllProducts] = useState<IProduct[]>([]);
   const [password, setPassword] = useState<string>('');
   const text = require('../data/language.json');
@@ -89,7 +92,8 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = ({ childr
       activeModalEmployees, setActiveModalEmployees,
       activeModalProducts, setActiveModalProducts,
       companyId, setCompanyId,
-      showMap, setShowMap
+      showMap, setShowMap,
+      userInput, setUserInput
     }}>
       {children}
     </GlobalStateContext.Provider>

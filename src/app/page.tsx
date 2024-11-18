@@ -30,7 +30,7 @@ export default function Login() {
         throw new Error("Login must be used within a GlobalStateProvider");
     }
 
-    const { user, setUser, password, setPassword, text, language } = context;
+    const { password, setPassword, text, language, userInput, setUserInput } = context;
 
     function saveUserInformationAndRedirect(userInformation:AxiosResponse) {
         setCookie(null, 'user_information', JSON.stringify(userInformation?.data), {
@@ -47,7 +47,7 @@ export default function Login() {
         setIsLoading(true);
         try {
             const res = await http.post('v1/login', {
-              email: user,
+              email: userInput,
               password: password,
               type: adminAccount,
             });
@@ -139,8 +139,8 @@ export default function Login() {
                 <div className={styles.container__box_input}>
                     <InputText
                         placeholder={text?.[language].login_user}
-                        value={user}
-                        state={setUser}
+                        value={userInput}
+                        state={setUserInput}
                         icon={UserIcon.src}
                         type='text'
                         white={false}
