@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "@/styles/reset.css";
 import "@/styles/_variables.sass"
+import 'leaflet/dist/leaflet.css';
 import React from "react";
 import { GlobalStateProvider } from "@/context/globalState";
 import Sidebar from "@/components/Sidebar";

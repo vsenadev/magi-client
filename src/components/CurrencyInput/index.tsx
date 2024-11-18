@@ -1,7 +1,8 @@
 'use client'
 
-import { IInputText } from "@/interface/InputText.interface";
+import { CurrencyInput } from 'react-currency-mask';
 import styles from './InputText.module.sass';
+import { ICurrencyInputText } from '@/interface/CurrencyInput.interface';
 
 // Função utilitária para aplicar a máscara
 const applyMask = (value: string, mask: string): string => {
@@ -28,7 +29,12 @@ const applyMask = (value: string, mask: string): string => {
     return maskedValue;
 }
 
-export default function InputText(props: IInputText) {
+const removeMask = (value: string): number => {
+    const cleanedValue = value.replace(/[^\d]+/g, '');
+    return parseFloat(cleanedValue) / 100;
+}
+
+export default function CurrencyInputText(props: ICurrencyInputText) {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let value = e.target.value;
@@ -38,15 +44,20 @@ export default function InputText(props: IInputText) {
             value = applyMask(value, props.mask);
         }
 
+        const numericValue = removeMask(value);
+
         // Atualiza o valor no componente pai
-        props.state(value);
+        props.state(numericValue);
     }
 
     return (
-        <input
+        <CurrencyInput
             placeholder={props.placeholder}
             value={props.value}
-            onChange={handleChange}
+            onChangeValue={handleChange}
+            prefix="R$ "
+            decimalseparator=","
+            groupseparator="."
             style={{
                 background: `url(${props.icon})`,
                 backgroundColor: props.white ? '#FFFF' : '#F1F5F9',
@@ -58,7 +69,6 @@ export default function InputText(props: IInputText) {
             type={props.type}
             className={styles.input}
             readOnly={props.disabled}
-            min={0}
         />
     )
 }

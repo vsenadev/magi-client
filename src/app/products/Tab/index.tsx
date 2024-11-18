@@ -7,10 +7,10 @@ import SearchIcon from '@/../public/img/search-icon.svg';
 import { IOption } from "@/interface/SelectOption.interface";
 import { http } from "@/environment/environment";
 import { useGlobalState } from "@/context/globalState";
-import Modal from "../../../components/ModalEmployees";
+import Modal from "../../../components/ModalProducts";
 
 export default function TabUsers() {
-    const { setUser, allUsers, activeModalEmployees, setActiveModalEmployees } = useGlobalState();
+    const { setProduct, allProducts, activeModalProducts, setActiveModalProducts } = useGlobalState();
     const [search, setSearch] = useState<string>('');
     const [activeType, setActiveType] = useState<boolean>(false);
     const [activeStatus, setActiveStatus] = useState<boolean>(false);
@@ -19,76 +19,56 @@ export default function TabUsers() {
     const [selectedType, setSelectedType] = useState<string>('');
     const [selectedStatus, setSelectedStatus] = useState<string>('');
 
-    async function getAllTypeAccount() {
-        const res = await http.get('v1/typeaccount');
-        setTypeOptions([{value: '', name: 'Sem filtro'}, ...res.data]);
-
-    }
-
-    async function getAllStatus() {
-        const res = await http.get('v1/statusaccount');
-        setStatusOptions([{value: '', name: 'Sem filtro'}, ...res.data]);
-    }
-
     useEffect(() => {
-        getAllTypeAccount();
-        getAllStatus();
-    }, []);
-
-    useEffect(() => {
-        filterUsers();
+        filterProducts();
     }, [search, selectedType, selectedStatus]);
 
-    function filterUsers() {
+    function filterProducts() {
         if (!search && !selectedType && !selectedStatus) {
-            setUser(allUsers);
+            setProduct(allProducts);
             return;
         }
 
-        const filteredUsers = allUsers.filter(employee => {
+        const filteredProducts = allProducts.filter(product => {
             const matchesSearch =
-                employee.name.toLowerCase().includes(search.toLowerCase()) ||
-                employee.cpf.includes(search);
-            const matchesType = selectedType ? employee.type_account === selectedType : true;
-            const matchesStatus = selectedStatus ? String(employee.status_account) === selectedStatus : true;
-
-            return matchesSearch && matchesType && matchesStatus;
+            product.name.toLowerCase().includes(search.toLowerCase());
+            return matchesSearch;
         });
 
-        setUser(filteredUsers);
+        setProduct(filteredProducts);
     }
 
     return (
         <div className={styles.container}>
             <Tab
-                searchPlaceholder="Pesquise por nome ou CPF"
+                searchPlaceholder="Pesquise pelo nome do produto"
                 searchValue={search}
                 searchState={setSearch}
                 searchIcon={SearchIcon.src}
                 searchType='text'
                 searchWidth="35%"
-                firstSelectOptionPlaceholder="Tipo de funcionário"
+                firstSelectOptionPlaceholder="Tipo de produto"
                 firstSelectOptionActive={activeType}
                 firstSelectOptionOptions={typeOptions}
                 firstSelectOptionSetActive={setActiveType}
                 firstSelectOptionValue={selectedType}
                 firstSelectOptionSetValue={setSelectedType}
-                secondSelectOptionPlaceholder="Status do funcionário"
+                secondSelectOptionPlaceholder="Status"
                 secondSelectOptionActive={activeStatus}
                 secondSelectOptionOptions={statusOptions}
                 secondSelectOptionSetActive={setActiveStatus}
                 secondSelectOptionValue={selectedStatus}
                 secondSelectOptionSetValue={setSelectedStatus}
-                buttonText='ADICIONAR FUNCIONÁRIO'
-                buttonAction={setActiveModalEmployees}
-                showFirstSelect={true}
-                showSecondSelect={true}
+                buttonText='ADICIONAR PRODUTO'
+                buttonAction={setActiveModalProducts}
+                showFirstSelect={false}
+                showSecondSelect={false}
             />
             {
-                activeModalEmployees && (
+                activeModalProducts && (
                     <section className={styles.container__modal}>
                         <Modal
-                            title='Funcionário'
+                            title='Produto'
                         />
                     </section>
                 )

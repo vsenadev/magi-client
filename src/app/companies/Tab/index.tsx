@@ -81,6 +81,8 @@ export default function TabCompanies() {
                 secondSelectOptionSetValue={setSelectedStatus}
                 buttonText='ADICIONAR EMPRESA'
                 buttonAction={setActiveModalCompany}
+                showFirstSelect={true}
+                showSecondSelect={true}
             />
             {
                 activeModalCompany && (

@@ -1,14 +1,14 @@
 'use client';
 
-import styles from '@/app/users/Table/Table.module.sass';
+import styles from '@/app/products/Table/Table.module.sass';
 import { useContext, useEffect, useState } from "react";
 import { GlobalStateContext } from "@/context/globalState";
 import HeaderTable from "@/components/Table";
 import ArrowsIcon from "@/../public/img/arrows.svg";
-import { IEmployees } from "@/interface/Employees.interface";
 import Image from "next/image";
 import { http } from "@/environment/environment";
 import { parseCookies } from 'nookies';
+import { IProduct } from '@/interface/Products.interface';
 
 export default function TableUsers() {
     const context = useContext(GlobalStateContext);
@@ -16,26 +16,27 @@ export default function TableUsers() {
         throw new Error("TableUsers must be used within a GlobalStateProvider");
     }
 
-    const { user, setUser, allUsers, setAllUsers, setIdSelected, setActiveModalEmployees, activeModalEmployees, idSelected, companyId, setCompanyId } = context;
+    const { product, setProduct, allProducts, setAllProducts, setIdSelected, setActiveModalProducts, activeModalProducts, idSelected, companyId, setCompanyId } = context;
     const [currentPage, setCurrentPage] = useState(1);
     const pageSize = 10;
 
     const tableHeader = [
-        { title: "", width: "5%", border: true },
-        { title: "Nome", width: "25%", border: true },
-        { title: "CPF", width: "15%", border: true },
-        { title: "Empresa", width: "20%", border: true },
-        { title: "E-mail", width: "20%", border: true },
-        { title: "Tipo", width: "5%", border: true },
-        { title: "Status", width: "5%", border: true },
+        { title: "ID", width: "5%", border: true },
+        { title: "Nome", width: "15%", border: true },
+        { title: "Tipo", width: "15%", border: true },
+        { title: "Comprimento", width: "15%", border: true },
+        { title: "Altura", width: "15%", border: true },
+        { title: "Largura", width: "15%", border: true },
+        { title: "Preço", width: "15%", border: true },
         { title: "", width: "5%", border: false },
     ];
 
-    async function getEmployees() {
+    async function getProducts() {
         if (companyId) {
-            await http.get(`v1/employee/company/${companyId}`).then((res) => {
-                setAllUsers(res.data);
-                setUser(res.data);
+            await http.get(`v1/product/company/${companyId}`).then((res) => {
+                console.log(res.data)
+                setAllProducts(res.data);
+                setProduct(res.data);
             })
         }
     }
@@ -63,15 +64,16 @@ export default function TableUsers() {
     }, []);
 
     useEffect(() => {
-        getEmployees();
-    }, [companyId, idSelected, activeModalEmployees]);
+        getProducts();
+    }, [companyId, idSelected, activeModalProducts]);
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [user]);
+    }, [product]);
 
-    const totalPages = Math.ceil(user.length / pageSize);
-    const paginatedEmployees = user.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    const totalPages = Math.ceil(product.length / pageSize);
+
+    const paginatedProducts = Array.isArray(product) ? product.slice((currentPage - 1) * pageSize, currentPage * pageSize) : [];
 
     const handlePreviousPage = () => {
         setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
@@ -86,44 +88,38 @@ export default function TableUsers() {
             <HeaderTable header={tableHeader} />
             <div className={styles.container__table}>
                 {
-                    Array.isArray(paginatedEmployees) && paginatedEmployees.length > 0 ? (
-                        paginatedEmployees.map((element: IEmployees) => (
+                    Array.isArray(paginatedProducts) && paginatedProducts.length > 0 ? (
+                        paginatedProducts.map((element: IProduct) => (
                             <div className={styles.container__table_line} key={element.id}>
-                                <div className={styles.container__table_line_picture}>
-                                    <Image
-                                        src={element.picture}
-                                        alt='logo da empresa'
-                                        width={42}
-                                        height={42}
-                                        priority={true}
-                                    />
+                                <div className={styles.container__table_line_id}>
+                                    <span>{element.id}</span>
                                 </div>
                                 <div className={styles.container__table_line_name}>
                                     <span>{element.name}</span>
                                 </div>
-                                <div className={styles.container__table_line_cpf}>
-                                    <span>{element.cpf}</span>
+                                <div className={styles.container__table_line_name}>
+                                    <span>{element.type}</span>
                                 </div>
-                                <div className={styles.container__table_line_company}>
-                                    <span>{element.company_name}</span>
+                                <div className={styles.container__table_line_name}>
+                                    <span>{element.lenght + ' cm'}</span>
                                 </div>
-                                <div className={styles.container__table_line_email}>
-                                    <span>{element.email}</span>
+                                <div className={styles.container__table_line_name}>
+                                    <span>{element.height + ' cm'}</span>
                                 </div>
-                                <div className={styles.container__table_line_type}>
-                                    <span>{element.type_account}</span>
+                                <div className={styles.container__table_line_name}>
+                                    <span>{element.width + ' cm'}</span>
                                 </div>
-                                <div className={styles.container__table_line_status}>
-                                    <span>{element.status_account}</span>
+                                <div className={styles.container__table_line_name}>
+                                    <span>{'R$ ' + element.value}</span>
                                 </div>
                                 <div className={styles.container__table_line_view} onClick={() => {
                                     setIdSelected(parseInt(element.id))
-                                    setActiveModalEmployees(true)
+                                    setActiveModalProducts(true)
                                 }}>
                                     <div className={styles.container__table_line_view_button}>
                                         <Image
                                             src={ArrowsIcon}
-                                            alt='visualizar funcionário'
+                                            alt='visualizar produto'
                                             width={18}
                                             height={18}
                                             priority={true}
@@ -133,7 +129,7 @@ export default function TableUsers() {
                             </div>
                         ))
                     ) : (
-                        <p>No employees to display</p>
+                        <p>No products to display</p>
                     )
                 }
             </div>
