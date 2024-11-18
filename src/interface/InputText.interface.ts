@@ -10,4 +10,5 @@ export interface IInputText {
     width: string;
     mask?: string;
     disabled?: boolean;
+    min?: number;
 }

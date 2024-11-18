@@ -19,9 +19,12 @@ import InputText from "@/components/InputText";
 import SelectOption from "@/components/SelectOption";
 import { IOption } from "@/interface/SelectOption.interface";
 import axios from "axios";
-import { Alert, AlertTitle } from "@mui/material";
+import { Alert, AlertTitle, Input } from "@mui/material";
 import { IProduct } from '@/interface/Products.interface';
-import { GoogleMap, LoadScript, DirectionsRenderer } from "@react-google-maps/api";
+import CartIcon from "@/../public/img/cart-icon.svg";
+import openrouteservice from 'openrouteservice';
+import L from 'leaflet';
+import ClearIcon from '@/../public/img/clear-icon.svg';
 
 
 export default function Modal(props: IModal) {
@@ -57,65 +60,106 @@ export default function Modal(props: IModal) {
         distance: 1,
     });
 
-    const containerStyle = {
-        width: "100%",
-        height: "400px",
-    };
-    
-    interface Props {
-        startingPoint: {
-            cep: string;
-            street: string;
-            city: string;
-            state: string;
-            number: string;
-        };
-        destinationPoint: {
-            cep: string;
-            street: string;
-            city: string;
-            state: string;
-            number: string;
-        };
-    }
-    
-    const MapComponent: React.FC<Props> = ({ startingPoint, destinationPoint }) => {
-        const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
-    
-        useEffect(() => {
-            const directionsService = new google.maps.DirectionsService();
-            const startAddress = `${startingPoint.number} ${startingPoint.street}, ${startingPoint.city}, ${startingPoint.state}`;
-            const endAddress = `${destinationPoint.number} ${destinationPoint.street}, ${destinationPoint.city}, ${destinationPoint.state}`;
-    
-            directionsService.route(
-                {
-                    origin: startAddress,
-                    destination: endAddress,
-                    travelMode: google.maps.TravelMode.DRIVING,
-                },
-                (result, status) => {
-                    if (status === google.maps.DirectionsStatus.OK) {
-                        setDirections(result);
-                    } else {
-                        console.error(`Error fetching directions: ${status}`);
-                    }
-                }
-            );
-        }, [startingPoint, destinationPoint]);
-    
-        return (
-            <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
-            <GoogleMap
-                mapContainerStyle={{ width: "100%", height: "400px" }}
-                center={{ lat: 0, lng: 0 }} // Centralizar o mapa apropriadamente
-                zoom={10}
-            >
-                {directions && <DirectionsRenderer directions={directions} />}
-            </GoogleMap>
-        </LoadScript>
-        );
+    const axios = require('axios');
+
+    const API_KEY = '5b3ce3597851110001cf62489d34d8fa2afa4adb8b36855f82fd819a';
+    const endpoint = 'https://api.openrouteservice.org/v2/directions/driving-car';
+
+    const origin = 'Rua das Flores, 100, São Paulo, Brasil';
+    const destination = 'Av. Paulista, 1578, São Paulo, Brasil';
+
+    const geocode = async (address: any) => {
+        const geocodeUrl = `https://api.openrouteservice.org/geocode/search?text=${encodeURIComponent(address)}`;
+        const response = await axios.get(geocodeUrl, {
+            headers: {
+                'Authorization': API_KEY,
+            },
+        });
+        return response.data.features[0].geometry.coordinates;
     };
 
+    // Função para calcular a rota entre os dois endereços
+    const getRoute = async (origin: any, destination: any) => {
+        try {
+            const originCoords = await geocode(origin);
+            const destinationCoords = await geocode(destination);
+
+            const routeUrl = `${endpoint}?start=${originCoords.join(',')}&end=${destinationCoords.join(',')}`;
+            const response = await axios.get(routeUrl, {
+                headers: {
+                    'Authorization': API_KEY,
+                },
+            });
+
+            console.log('Rota:', response.data);
+        } catch (error) {
+            console.error('Erro ao calcular rota:', error);
+        }
+    };
+
+    // Chama a função com os endereços
+    getRoute(origin, destination);
+
+
+    const apiKey = '5b3ce3597851110001cf62489d34d8fa2afa4adb8b36855f82fd819a';
+
+    const MapWithRoute = () => {
+        const mapRef = useRef<HTMLElement | null>(null);
+        const [routeData, setRouteData] = useState<any>(null);
+
+        useEffect(() => {
+            // Verifica se mapRef.current não é null antes de inicializar o mapa
+            if (mapRef.current) {
+                const map = L.map(mapRef.current).setView([51.505, -0.09], 13); // Posição inicial do mapa
+
+                // Adiciona o tile layer (camada do mapa)
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+                // Usando o cliente da API do OpenRouteService para obter rotas
+                const client = new openrouteservice('5b3ce3597851110001cf62489d34d8fa2afa4adb8b36855f82fd819a');
+
+                // Exemplo de coordenadas de dois pontos (origem e destino)
+                const origin = [-0.1276, 51.5074]; // Londres (exemplo)
+                const destination = [2.3522, 48.8566]; // Paris (exemplo)
+
+                // Solicita a rota do OpenRouteService entre os dois pontos
+                client.getDirections(
+                    'driving-car', // Perfil: carro
+                    'geojson',     // Formato da resposta: geojson
+                    {
+                        coordinates: [origin, destination]
+                    }
+                )
+                    .then((response: any) => {
+                        // Recebe os dados da rota
+                        setRouteData(response.features[0].geometry.coordinates);
+
+                        // Desenha a linha da rota no mapa
+                        const routeLine = L.polyline(response.features[0].geometry.coordinates.map((coord: any) => [coord[1], coord[0]]), {
+                            color: 'blue',
+                            weight: 5,
+                            opacity: 0.7
+                        }).addTo(map);
+
+                        // Ajusta o mapa para mostrar a rota
+                        map.fitBounds(routeLine.getBounds());
+                    })
+                    .catch((error) => {
+                        console.error('Erro ao obter a rota: ', error);
+                    });
+            }
+        }, []);
+
+        return (
+            <div>
+                <h2>Rota entre dois lugares</h2>
+                <div
+                    ref={mapRef}
+                    style={{ width: '100%', height: '500px' }}
+                ></div>
+            </div>
+        );
+    };
     function cleanValues() {
         setData({
             id: "",
@@ -173,23 +217,49 @@ export default function Modal(props: IModal) {
     };
 
     const handleProductChange = (field: keyof IProduct, value: string | number, index: number) => {
-        if(field == 'name'){
+        if (field == 'name') {
             typeOptions.forEach((element: any) => {
-                if(element.name == value){
+                if (element.name == value) {
                     setProducts(prevProducts => {
                         const updatedProducts = [...prevProducts];
-                        updatedProducts[index] = { ...updatedProducts[index], 'value': parseFloat(element.value) };
-                        updatedProducts[index] = { ...updatedProducts[index], 'width': parseFloat(element.width) };
-                        updatedProducts[index] = { ...updatedProducts[index], 'height': parseFloat(element.height) };
-                        updatedProducts[index] = { ...updatedProducts[index], 'lenght': parseFloat(element.lenght) };
+                        updatedProducts[index] = {
+                            ...updatedProducts[index],
+                            'value': Math.max(0, parseFloat(element.value)),
+                            'width': Math.max(0, parseFloat(element.width)),
+                            'height': Math.max(0, parseFloat(element.height)),
+                            'lenght': Math.max(0, parseFloat(element.lenght))
+                        };
                         return updatedProducts;
                     });
                 }
-            })
+            });
         }
+
+        if (typeof value === 'number' && value >= 0) {
+            setProducts(prevProducts => {
+                const updatedProducts = [...prevProducts];
+                updatedProducts[index] = { ...updatedProducts[index], [field]: value };
+                return updatedProducts;
+            });
+        } else if (typeof value === 'string' && !isNaN(parseFloat(value)) && parseFloat(value) >= 0) {
+            setProducts(prevProducts => {
+                const updatedProducts = [...prevProducts];
+                updatedProducts[index] = { ...updatedProducts[index], [field]: parseFloat(value) };
+                return updatedProducts;
+            });
+        }
+
         setProducts(prevProducts => {
             const updatedProducts = [...prevProducts];
             updatedProducts[index] = { ...updatedProducts[index], [field]: value };
+            return updatedProducts;
+        });
+    }
+
+    const handleRemoveProduct = (index: number) => {
+        setProducts(prevProducts => {
+            const updatedProducts = [...prevProducts];
+            updatedProducts.splice(index, 1); // Remove o produto no índice especificado
             return updatedProducts;
         });
     };
@@ -278,7 +348,7 @@ export default function Modal(props: IModal) {
                     </Alert>
                 </div>
             )}
-    
+
             {/* Mensagem de sucesso */}
             {modalSuccess && (
                 <div className={styles.container__modal}>
@@ -288,44 +358,16 @@ export default function Modal(props: IModal) {
                     </Alert>
                 </div>
             )}
-    
-            {/* Condicional para exibir mapa ou formulário */}
-            {showMap ? (<div className={styles.mapModal}>
-        <div className={styles.mapModal__content}>
-            {/* Botão para fechar o modal */}
-            <button
-                className={styles.mapModal__closeButton}
-                onClick={() => setShowMap(false)} // Fecha o modal ao clicar
-            >
-                Fechar
-            </button>
 
-            {/* Aqui você renderiza o mapa com a rota */}
-            <MapComponent
-                startingPoint={{
-                    cep: "03042-000",
-                    street: "Rua Piratininga",
-                    city: "São Paulo",
-                    state: "São Paulo",
-                    number: "270",
-                }}
-                destinationPoint={{
-                    cep: "01518-010",
-                    street: "Rua Professor Demóstenes Batista Figueira Marques",
-                    city: "São Paulo",
-                    state: "São Paulo",
-                    number: "13",
-                }}
-            />
-        </div>
-    </div>) : (
+            {/* Condicional para exibir mapa ou formulário */}
+            {showMap ? (<div><h1>Teste</h1></div>) : (
                 <>
                     {/* Box esquerdo */}
                     <div className={styles.container__boxleft}>
                         <h1 className={styles.container__boxleft_title}>
                             {idSelected !== null ? 'Visualizar' : 'Adicionar'} {props.title}
                         </h1>
-    
+
                         <div className={styles.container__boxleft_input}>
                             {/* Campos de entrada */}
                             <InputText
@@ -364,17 +406,17 @@ export default function Modal(props: IModal) {
                                 white={false}
                                 width="100%"
                             />
-    
+
                             {/* Produtos */}
-                            <div>
+                            <div style={{minHeight: '140px', maxHeight: '200px', overflowY: 'auto'}}>
                                 {products.map((product: IProduct, index: number) => (
-                                    <div key={product.id}>
+                                    <div style={{ display: 'flex', width: '100%', gap: '10px', marginBottom: '10px' }} key={product.id}>
                                         <SelectOption
                                             placeholder="Produtos"
                                             active={activeType}
                                             options={typeOptions}
                                             setActive={setActiveType}
-                                            width="98.5%"
+                                            width="80%"
                                             value={product.name}
                                             setValue={(value) => handleProductChange('name', value, index)}
                                             backgroundBlue
@@ -383,27 +425,44 @@ export default function Modal(props: IModal) {
                                             placeholder="Quantidade"
                                             value={(products[index].quantity)}
                                             state={(value) => handleProductChange('quantity', parseInt(value), index)}
-                                            icon={CnpjIcon.src}
+                                            icon={CartIcon.src}
                                             type="number"
                                             white={false}
-                                            width="100%"
+                                            width="20%"
+                                            min={0}
                                         />
+                                        <button
+                                            onClick={() => handleRemoveProduct(index)}
+                                            style={{ 
+                                                marginLeft: '10px', 
+                                                cursor: 'pointer', 
+                                                background: 'transparent',
+                                                border: 'none'
+                                            }}
+                                        >
+                                            <Image src={ClearIcon} alt='Remover' />
+                                        </button>
                                     </div>
+
                                 ))}
                             </div>
-                            <button
-                                onClick={() =>
-                                    setProducts((prevProducts) => [
-                                        ...prevProducts,
-                                        { name: '', quantity: 0, value: 0, lenght: 0, width: 0, height: 0 },
-                                    ])
-                                }
-                            >
-                                Adicionar Produto
-                            </button>
+                            <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center'}}>
+                                <button
+                                    className='container__boxleft_input_add_button'
+                                    style={{width: '40%', backgroundColor: '#f1f5f9', borderRadius: '10px', border: 'none', height: '40%', padding: '15px', cursor: 'pointer'}}
+                                    onClick={() =>
+                                        setProducts((prevProducts) => [
+                                            ...prevProducts,
+                                            { name: '', quantity: 0, value: 0, lenght: 0, width: 0, height: 0 },
+                                        ])
+                                    }
+                                >
+                                    <span style={{fontWeight: '600'}}>Adicionar Outro Produto</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
-    
+
                     {/* Box direito */}
                     <div className={styles.container__boxright}>
                         {/* Botão de fechar */}
@@ -415,7 +474,7 @@ export default function Modal(props: IModal) {
                                 <Image src={CloseIcon} alt="Fechar" width={12} height={12} />
                             </div>
                         </div>
-    
+
                         {/* Endereço de saída */}
                         <h1>Endereço de saída</h1>
                         <InputText
@@ -467,7 +526,7 @@ export default function Modal(props: IModal) {
                             white={false}
                             width="50%"
                         />
-    
+
                         {/* Endereço de chegada */}
                         <h1>Endereço de chegada</h1>
                         <InputText
@@ -519,7 +578,7 @@ export default function Modal(props: IModal) {
                             white={false}
                             width="50%"
                         />
-    
+
                         {/* Botões */}
                         <div className={styles.container__boxright_buttons}>
                             <button
@@ -542,5 +601,5 @@ export default function Modal(props: IModal) {
                 </>
             )}
         </div>
-    );    
+    );
 }

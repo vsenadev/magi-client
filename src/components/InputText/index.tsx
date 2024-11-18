@@ -58,6 +58,7 @@ export default function InputText(props: IInputText) {
             type={props.type}
             className={styles.input}
             readOnly={props.disabled}
+            min={0}
         />
     )
 }
