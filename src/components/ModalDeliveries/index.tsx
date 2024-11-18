@@ -22,10 +22,8 @@ import axios from "axios";
 import { Alert, AlertTitle, Input } from "@mui/material";
 import { IProduct } from '@/interface/Products.interface';
 import CartIcon from "@/../public/img/cart-icon.svg";
-import openrouteservice from 'openrouteservice';
-import L from 'leaflet';
 import ClearIcon from '@/../public/img/clear-icon.svg';
-
+import {MapContainer, TileLayer, Polyline, useMap} from 'react-leaflet';
 
 export default function Modal(props: IModal) {
     const { idSelected, setIdSelected, setActiveModalDelivery, companyId, showMap, setShowMap } = useGlobalState();
@@ -60,106 +58,6 @@ export default function Modal(props: IModal) {
         distance: 1,
     });
 
-    const axios = require('axios');
-
-    const API_KEY = '5b3ce3597851110001cf62489d34d8fa2afa4adb8b36855f82fd819a';
-    const endpoint = 'https://api.openrouteservice.org/v2/directions/driving-car';
-
-    const origin = 'Rua das Flores, 100, São Paulo, Brasil';
-    const destination = 'Av. Paulista, 1578, São Paulo, Brasil';
-
-    const geocode = async (address: any) => {
-        const geocodeUrl = `https://api.openrouteservice.org/geocode/search?text=${encodeURIComponent(address)}`;
-        const response = await axios.get(geocodeUrl, {
-            headers: {
-                'Authorization': API_KEY,
-            },
-        });
-        return response.data.features[0].geometry.coordinates;
-    };
-
-    // Função para calcular a rota entre os dois endereços
-    const getRoute = async (origin: any, destination: any) => {
-        try {
-            const originCoords = await geocode(origin);
-            const destinationCoords = await geocode(destination);
-
-            const routeUrl = `${endpoint}?start=${originCoords.join(',')}&end=${destinationCoords.join(',')}`;
-            const response = await axios.get(routeUrl, {
-                headers: {
-                    'Authorization': API_KEY,
-                },
-            });
-
-            console.log('Rota:', response.data);
-        } catch (error) {
-            console.error('Erro ao calcular rota:', error);
-        }
-    };
-
-    // Chama a função com os endereços
-    getRoute(origin, destination);
-
-
-    const apiKey = '5b3ce3597851110001cf62489d34d8fa2afa4adb8b36855f82fd819a';
-
-    const MapWithRoute = () => {
-        const mapRef = useRef<HTMLElement | null>(null);
-        const [routeData, setRouteData] = useState<any>(null);
-
-        useEffect(() => {
-            // Verifica se mapRef.current não é null antes de inicializar o mapa
-            if (mapRef.current) {
-                const map = L.map(mapRef.current).setView([51.505, -0.09], 13); // Posição inicial do mapa
-
-                // Adiciona o tile layer (camada do mapa)
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-                // Usando o cliente da API do OpenRouteService para obter rotas
-                const client = new openrouteservice('5b3ce3597851110001cf62489d34d8fa2afa4adb8b36855f82fd819a');
-
-                // Exemplo de coordenadas de dois pontos (origem e destino)
-                const origin = [-0.1276, 51.5074]; // Londres (exemplo)
-                const destination = [2.3522, 48.8566]; // Paris (exemplo)
-
-                // Solicita a rota do OpenRouteService entre os dois pontos
-                client.getDirections(
-                    'driving-car', // Perfil: carro
-                    'geojson',     // Formato da resposta: geojson
-                    {
-                        coordinates: [origin, destination]
-                    }
-                )
-                    .then((response: any) => {
-                        // Recebe os dados da rota
-                        setRouteData(response.features[0].geometry.coordinates);
-
-                        // Desenha a linha da rota no mapa
-                        const routeLine = L.polyline(response.features[0].geometry.coordinates.map((coord: any) => [coord[1], coord[0]]), {
-                            color: 'blue',
-                            weight: 5,
-                            opacity: 0.7
-                        }).addTo(map);
-
-                        // Ajusta o mapa para mostrar a rota
-                        map.fitBounds(routeLine.getBounds());
-                    })
-                    .catch((error) => {
-                        console.error('Erro ao obter a rota: ', error);
-                    });
-            }
-        }, []);
-
-        return (
-            <div>
-                <h2>Rota entre dois lugares</h2>
-                <div
-                    ref={mapRef}
-                    style={{ width: '100%', height: '500px' }}
-                ></div>
-            </div>
-        );
-    };
     function cleanValues() {
         setData({
             id: "",
@@ -181,6 +79,7 @@ export default function Modal(props: IModal) {
     }
 
     const handleClose = async () => {
+        setShowMap(false);
         setIdSelected(null);
         cleanValues();
         setActiveModalDelivery(false);
@@ -190,7 +89,6 @@ export default function Modal(props: IModal) {
     async function getWithId() {
         if (idSelected !== null) {
             await http.get(`v1/delivery/${idSelected}`).then((res) => {
-                console.log(res.data)
                 setOneDelivery(res.data);
             });
         }
@@ -205,7 +103,7 @@ export default function Modal(props: IModal) {
     }
 
     useEffect(() => {
-        getWithId();
+        getWithId()
         getAllTypeAccount();
     }, []);
 
@@ -337,6 +235,18 @@ export default function Modal(props: IModal) {
         }
     }
 
+    function CenterMap({ position }: { position: [number, number] }) {
+        const map = useMap();
+
+        useEffect(() => {
+            if (position) {
+                map.setView(position, 15); // Centraliza o mapa na posição inicial com o zoom 15
+            }
+        }, [position, map]);
+
+        return null;
+    }
+
     return (
         <div className={styles.container}>
             {/* Mensagem de erro */}
@@ -359,74 +269,172 @@ export default function Modal(props: IModal) {
                 </div>
             )}
 
-            {/* Condicional para exibir mapa ou formulário */}
-            {showMap ? (<div><h1>Teste</h1></div>) : (
-                <>
-                    {/* Box esquerdo */}
-                    <div className={styles.container__boxleft}>
-                        <h1 className={styles.container__boxleft_title}>
-                            {idSelected !== null ? 'Visualizar' : 'Adicionar'} {props.title}
-                        </h1>
+            {showMap ? (
+              //div com duas divs dentro uma encima da outra
+              <div style={{display: "flex", flexDirection: "column", gap: "16px", width: "100%", padding: "1rem"}}>
+                  {/*div com divs dentro uma em sequência da outra*/}
+                  <div style={{display: "flex", gap: "8px"}}>
+                      {/*divs azul bem claro com informações lado a lado usando a font montseraat*/}
+                      <div style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                          backgroundColor: "#e0f7fa",
+                          padding: "8px",
+                          borderRadius: "4px",
+                          fontFamily: "'Montserrat', sans-serif"
+                      }}>
+                          <span>Remetente</span>
+                          <span>{oneDelivery.starting_street}, {oneDelivery.starting_number} - {oneDelivery.starting_city}, {oneDelivery.starting_state}</span>
+                      </div>
+                      <div style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                          backgroundColor: "#e0f7fa",
+                          padding: "8px",
+                          borderRadius: "4px",
+                          fontFamily: "'Montserrat', sans-serif"
+                      }}>
+                          <span>Destino</span>
+                          <span>{oneDelivery.destination_street}, {oneDelivery.destination_number} - {oneDelivery.destination_city}, {oneDelivery.destination_state}</span>
+                      </div>
+                      <div style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                          backgroundColor: "#e0f7fa",
+                          padding: "8px",
+                          borderRadius: "4px",
+                          fontFamily: "'Montserrat', sans-serif"
+                      }}>
+                          <span>Status da rota</span>
+                          <span>{oneDelivery.status}</span>
+                      </div>
+                      <div style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                          backgroundColor: "#e0f7fa",
+                          padding: "8px",
+                          borderRadius: "4px",
+                          fontFamily: "'Montserrat', sans-serif"
+                      }}>
+                          <span>Status da tranca</span>
+                          <span>{oneDelivery.lock_status}</span>
+                      </div>
+                      <div className={styles.container__boxright_close} style={{width:'20px'}}>
+                          <div
+                            className={styles.container__boxright_close_content}
+                            onClick={handleClose}
+                          >
+                              <Image src={CloseIcon} alt="Fechar" width={12} height={12}/>
+                          </div>
+                      </div>
+                  </div>
+                  {/*div maior que ocupa por volta de 80% do modal*/}
+                  <div style={{flex: 1, height: "80%", border: "1px solid #ccc", borderRadius: "8px", padding: "16px"}}>
+                      <MapContainer
+                        style={{height: '100%', width: '100%'}}
+                        center={
+                            oneDelivery.expected_route?.[0]
+                              ? [oneDelivery.expected_route[0].latitude, oneDelivery.expected_route[0].longitude]
+                              : [0, 0]
+                        }
+                        zoom={15}
+                        scrollWheelZoom={false}
+                      >
+                          <TileLayer
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+                          />
+                          {oneDelivery.expected_route && Array.isArray(oneDelivery.expected_route) && (
+                            <Polyline
+                              positions={oneDelivery.expected_route.map((point: any) => [point.latitude, point.longitude])}
+                              pathOptions={{color: 'blue', weight: 4, dashArray: '10, 10'}}
+                            />
+                          )}
+                          {oneDelivery.traced_route && Array.isArray(oneDelivery.traced_route) && (
+                            <Polyline
+                              positions={oneDelivery.traced_route.map((point: any) => [point.latitude, point.longitude])}
+                              pathOptions={{color: 'green', weight: 4}}
+                            />
+                          )}
+                          {oneDelivery.expected_route?.[0] && (
+                            <CenterMap
+                              position={[oneDelivery.expected_route[0].latitude, oneDelivery.expected_route[0].longitude]}/>
+                          )}
+                      </MapContainer>
+                  </div>
+              </div>
+            ) : (
+              <>
+                  {/* Box esquerdo */}
+                  <div className={styles.container__boxleft}>
+                      <h1 className={styles.container__boxleft_title}>
+                          {idSelected !== null ? 'Visualizar' : 'Adicionar'} {props.title}
+                      </h1>
 
-                        <div className={styles.container__boxleft_input}>
-                            {/* Campos de entrada */}
-                            <InputText
-                                placeholder="Nome"
-                                value={data.name}
-                                state={(value) => handleInputChange('name', value)}
-                                icon={LetterIcon.src}
-                                type="text"
-                                white={false}
-                                width="100%"
-                            />
-                            <InputText
-                                placeholder="Remetente (email)"
-                                value={data.sender}
-                                state={(value) => handleInputChange('sender', value)}
-                                icon={MailIcon.src}
-                                type="text"
-                                white={false}
-                                width="100%"
-                            />
-                            <InputText
-                                placeholder="Destinatário (email)"
-                                value={data.recipient}
-                                state={(value) => handleInputChange('recipient', value)}
-                                icon={CnpjIcon.src}
-                                type="text"
-                                white={false}
-                                width="100%"
-                            />
-                            <InputText
-                                placeholder="Data de envio"
-                                value={data.send_date}
-                                state={(value) => handleInputChange('send_date', value)}
-                                icon={CompanyIcon.src}
-                                type="date"
-                                white={false}
-                                width="100%"
-                            />
+                      <div className={styles.container__boxleft_input}>
+                          {/* Campos de entrada */}
+                          <InputText
+                            placeholder="Nome"
+                            value={data.name}
+                            state={(value) => handleInputChange('name', value)}
+                            icon={LetterIcon.src}
+                            type="text"
+                            white={false}
+                            width="100%"
+                          />
+                          <InputText
+                            placeholder="Remetente (email)"
+                            value={data.sender}
+                            state={(value) => handleInputChange('sender', value)}
+                            icon={MailIcon.src}
+                            type="text"
+                            white={false}
+                            width="100%"
+                          />
+                          <InputText
+                            placeholder="Destinatário (email)"
+                            value={data.recipient}
+                            state={(value) => handleInputChange('recipient', value)}
+                            icon={CnpjIcon.src}
+                            type="text"
+                            white={false}
+                            width="100%"
+                          />
+                          <InputText
+                            placeholder="Data de envio"
+                            value={data.send_date}
+                            state={(value) => handleInputChange('send_date', value)}
+                            icon={CompanyIcon.src}
+                            type="date"
+                            white={false}
+                            width="100%"
+                          />
 
-                            {/* Produtos */}
-                            <div style={{minHeight: '140px', maxHeight: '200px', overflowY: 'auto'}}>
-                                {products.map((product: IProduct, index: number) => (
-                                    <div style={{ display: 'flex', width: '100%', gap: '10px', marginBottom: '10px' }} key={product.id}>
-                                        <SelectOption
-                                            placeholder="Produtos"
-                                            active={activeType}
-                                            options={typeOptions}
-                                            setActive={setActiveType}
-                                            width="80%"
-                                            value={product.name}
-                                            setValue={(value) => handleProductChange('name', value, index)}
-                                            backgroundBlue
-                                        />
-                                        <InputText
-                                            placeholder="Quantidade"
-                                            value={(products[index].quantity)}
-                                            state={(value) => handleProductChange('quantity', parseInt(value), index)}
-                                            icon={CartIcon.src}
-                                            type="number"
+                          {/* Produtos */}
+                          <div style={{minHeight: '140px', maxHeight: '200px', overflowY: 'auto'}}>
+                              {products.map((product: IProduct, index: number) => (
+                                <div style={{display: 'flex', width: '100%', gap: '10px', marginBottom: '10px'}}
+                                     key={product.id}>
+                                    <SelectOption
+                                      placeholder="Produtos"
+                                      active={activeType}
+                                      options={typeOptions}
+                                      setActive={setActiveType}
+                                      width="80%"
+                                      value={product.name}
+                                      setValue={(value) => handleProductChange('name', value, index)}
+                                      backgroundBlue
+                                    />
+                                    <InputText
+                                      placeholder="Quantidade"
+                                      value={(products[index].quantity)}
+                                      state={(value) => handleProductChange('quantity', parseInt(value), index)}
+                                      icon={CartIcon.src}
+                                      type="number"
                                             white={false}
                                             width="20%"
                                             min={0}
