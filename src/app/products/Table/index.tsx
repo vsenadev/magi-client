@@ -113,7 +113,9 @@ export default function TableUsers() {
                                     <span>{'R$ ' + element.value}</span>
                                 </div>
                                 <div className={styles.container__table_line_view} onClick={() => {
-                                    setIdSelected(parseInt(element.id))
+                                    if (element.id != null) {
+                                        setIdSelected(parseInt(element.id))
+                                    }
                                     setActiveModalProducts(true)
                                 }}>
                                     <div className={styles.container__table_line_view_button}>

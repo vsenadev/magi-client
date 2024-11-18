@@ -51,7 +51,9 @@ export default function CurrencyInputText(props: ICurrencyInputText) {
     }
 
     return (
+
         <CurrencyInput
+            // @ts-ignore
             placeholder={props.placeholder}
             value={props.value}
             onChangeValue={handleChange}

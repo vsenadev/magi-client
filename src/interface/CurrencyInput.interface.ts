@@ -1,9 +1,7 @@
-import React from "react";
-
 export interface IInputText {
-    placeholder?: string;
-    value: number | null;
-    state: (value: string) => void;
+    placeholder?: any; // Placeholder adicionado como opcional
+    value: any; // Removed null para evitar problemas
+    state: (value: string | number) => void;
     icon?: string;
     white?: boolean;
     width?: string;

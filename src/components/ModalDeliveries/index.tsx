@@ -4,8 +4,7 @@ import styles from '@/components/ModalDeliveries/Modal.module.sass';
 import { useGlobalState } from "@/context/globalState";
 import { IModal } from "@/interface/Modal.interface";
 import { http } from "@/environment/environment";
-import { useEffect, useRef, useState } from "react";
-import CamIcon from "@/../public/img/cam-icon.svg";
+import { useEffect, useState } from "react";
 import CloseIcon from "@/../public/img/close-icon.svg";
 import LetterIcon from "@/../public/img/letter-icon.svg";
 import MailIcon from "@/../public/img/mail-icon.svg";
@@ -13,7 +12,7 @@ import CnpjIcon from "@/../public/img/cnpj-icon.svg";
 import CompanyIcon from "@/../public/img/companies-icon.svg";
 import AddressIcon from "@/../public/img/address-icon.svg";
 import NumberIcon from "@/../public/img/number-icon.svg";
-import { IDelivery } from "@/interface/Deliveries.interface";
+import {IDelivery, IOneDelivery} from "@/interface/Deliveries.interface";
 import Image from "next/image";
 import InputText from "@/components/InputText";
 import SelectOption from "@/components/SelectOption";
@@ -32,7 +31,21 @@ export default function Modal(props: IModal) {
     const [modalError, setModalError] = useState<boolean>(false);
     const [modalSuccess, setModalSuccess] = useState<boolean>(false);
     const [modalMessage, setModalMessage] = useState<string>('');
-    const [oneDelivery, setOneDelivery] = useState<Object>({});
+    const [oneDelivery, setOneDelivery] = useState<IOneDelivery>({
+      starting_street: "",
+      starting_number: 0,
+      starting_city: "",
+      starting_state: "",
+      destination_street: "",
+      destination_number: 0,
+      destination_city: "",
+      destination_state: "",
+      status: "",
+      lock_status: "",
+      expected_route: [],
+      traced_route: [],
+    });
+
     const [products, setProducts] = useState<IProduct[]>([{
         name: '',
         quantity: 0,

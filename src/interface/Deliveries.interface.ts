@@ -39,3 +39,23 @@ export interface IDelivery {
   products?: IProduct[];
   pdf?: any;
 }
+
+export interface IRoutePoint {
+  latitude: number;
+  longitude: number;
+}
+
+export interface IOneDelivery {
+  starting_street: string;       // Rua de início
+  starting_number: number;       // Número de início
+  starting_city: string;         // Cidade de início
+  starting_state: string;        // Estado de início
+  destination_street: string;    // Rua de destino
+  destination_number: number;    // Número de destino
+  destination_city: string;      // Cidade de destino
+  destination_state: string;     // Estado de destino
+  status: string;                // Status da rota
+  lock_status: string;           // Status da tranca
+  expected_route: IRoutePoint[]; // Lista de pontos esperados na rota
+  traced_route: IRoutePoint[];   // Lista de pontos percorridos na rota
+}

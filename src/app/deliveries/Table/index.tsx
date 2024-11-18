@@ -140,7 +140,11 @@ export default function TableUsers() {
                                     <span>{element.sender}</span>
                                 </div>
                                 <div className={styles.container__table_line_sendDate}>
-                                    <span>{element.send_date.substring(0, 10).replaceAll('-', '/') + ' até ' + element.expected_date?.substring(0, 10).replaceAll('-', '/')}</span>
+                                    <span>
+                                      {new Date(element.send_date).toLocaleDateString('pt-BR') +
+                                        ' até ' +
+                                        (element.expected_date ? new Date(element.expected_date).toLocaleDateString('pt-BR') : '')}
+                                    </span>
                                 </div>
                                 <div className={styles.container__table_line_distance}>
                                     <span>{element.status}</span>
