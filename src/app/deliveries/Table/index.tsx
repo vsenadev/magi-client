@@ -22,9 +22,10 @@ export default function TableUsers() {
     const pageSize = 10;
 
     const tableHeader = [
+        { title: "ID", width: "5%", border: true},
         { title: "Nome", width: "15%", border: true },
         { title: "Remetente", width: "15%", border: true },
-        { title: "Envio - Previsto", width: "25%", border: true },
+        { title: "Envio - Previsto", width: "20%", border: true },
         { title: "Status", width: "10%", border: true },
         { title: "Valor Transportado", width: "15%", border: true },
         { title: "Distância", width: "10%", border: true },
@@ -133,6 +134,9 @@ export default function TableUsers() {
                     Array.isArray(paginatedDeliveries) && paginatedDeliveries.length > 0 ? (
                         paginatedDeliveries.map((element: IDelivery) => (
                             <div className={styles.container__table_line} key={element.id}>
+                                <div className={styles.container__table_line_id}>
+                                    <span>{element.id}</span>
+                                </div>
                                 <div className={styles.container__table_line_name}>
                                     <span>{element.name}</span>
                                 </div>

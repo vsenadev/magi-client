@@ -3,7 +3,7 @@ export interface IProduct {
     name: string;
     type?: string;
     value: number | null;
-    lenght: number | null;
+    length: number | null;
     width: number | null;
     height: number | null;
     company_id?: number;

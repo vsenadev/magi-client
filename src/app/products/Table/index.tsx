@@ -101,7 +101,7 @@ export default function TableUsers() {
                                     <span>{element.type}</span>
                                 </div>
                                 <div className={styles.container__table_line_name}>
-                                    <span>{element.lenght + ' cm'}</span>
+                                    <span>{element.length + ' cm'}</span>
                                 </div>
                                 <div className={styles.container__table_line_name}>
                                     <span>{element.height + ' cm'}</span>

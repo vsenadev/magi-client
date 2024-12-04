@@ -474,7 +474,7 @@ export default function Modal(props: IModal) {
                                     onClick={() =>
                                         setProducts((prevProducts) => [
                                             ...prevProducts,
-                                            { name: '', quantity: 0, value: 0, lenght: 0, width: 0, height: 0 },
+                                            { name: '', quantity: 0, value: 0, length: 0, width: 0, height: 0 },
                                         ])
                                     }
                                 >

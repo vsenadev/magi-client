@@ -44,7 +44,7 @@ export default function Modal(props: IModal) {
         type: "",
         id: "",
         value: null,
-        lenght: null,
+        length: null,
         width: null,
         height: null,
         company_id: companyId || 0,
@@ -59,7 +59,7 @@ export default function Modal(props: IModal) {
             type: "",
             id: "",
             value: null,
-            lenght: null,
+            length: null,
             width: null,
             height: null,
             company_id: companyId || 0,
@@ -96,7 +96,7 @@ export default function Modal(props: IModal) {
 
     async function sendRequest() {
         data.value = Number(data.value)
-        data.lenght = Number(data.lenght)
+        data.length = Number(data.length)
         data.height = Number(data.height)
         data.width = Number(data.width)
         try {
@@ -188,8 +188,8 @@ export default function Modal(props: IModal) {
                     />
                     <InputText
                         placeholder='Tamanho do produto'
-                        value={data.lenght}
-                        state={(value) => handleInputChange('lenght', value)}
+                        value={data.length}
+                        state={(value) => handleInputChange('length', value)}
                         icon={HeightProduct.src}
                         type="number"
                         white={false}
